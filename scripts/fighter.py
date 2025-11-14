@@ -4,6 +4,8 @@ import pygame
 class Fighter():
     def __init__(self, player,flip,inicial_postion, data, sprite_sheet, animation_steps,sound, status, screen):
         self.inicial_position = inicial_postion
+        self.screen_height = 0
+        self.screen_width = 0
         self.player = player
         self.size = data[0]
         self.image_scale = data[1]
@@ -25,18 +27,25 @@ class Fighter():
         self.max_att_coldown_1 = status['attack_coldwon1']
         self.max_att_coldown_2 = status['attack_coldwon2']
         self.health = 100
+        self.speed = status['speed']
         self.alive = True
         self.hit = False
-        self.dano = status['dano'] #status
+        self.dano1 = status['dano1'] #status
+        self.dano2 = status['dano2'] # status
         self.defesa = status['defesa'] #status
         self.facing_direction = True
         self.attack_sound = sound
         self.attack_animation_cooldown = status['attack_animation_cooldown']
-        self.attack_hitbox_modificator = status['attack_box_size']
+        self.attack_hitbox_modificator_1 = status['attack_box_size_1']
+        self.attack_hitbox_modificator_2 = status['attack_box_size_2']
         self.screen = screen
         self.target = 0
         self.ult_points = 0
         self.ult_min = status['ult_min']
+        self.knock_back = status['knock_back']
+        self.count_knock_back = 0
+        
+        
 
     def load_images(self, sprite_sheet, animation_steps):
         # extraindo imagens dos spritesheets
@@ -84,6 +93,14 @@ class Fighter():
         elif self.attcking and pygame.time.get_ticks() - self.update_time > self.attack_animation_cooldown:
             self.frame_index += 1
             self.update_time = pygame.time.get_ticks()
+            if self.frame_index == 4 and self.attack_type == 1:
+                self.execute_attack(self.target)
+                self.attack_type = 0
+            elif self.attack_type == 2 and self.frame_index == 3:
+                self.execute_attack(self.target)
+                self.attack_type = 0
+
+        
 
 
 
@@ -115,18 +132,32 @@ class Fighter():
 
     def move(self, screen_width, screen_height, target):
         self.target = target
-        SPEED = 10
+        self.screen_height = screen_height
+        self.screen_width = screen_width
+        SPEED = self.speed
         GRAVIDADE = 2
         dx = 0
         dy = 0
         self.running = False
-        self.attack_type = 0
         if self.player == 1:
-            self.facing_direction = True
+            if not self.flip:
+                self.facing_direction = True
+            else:
+                self.facing_direction = False
         elif self.player == 2:
-            self.facing_direction = False
-        if self.flip:
-            self.facing_direction = False
+            if not self.flip:
+                self.facing_direction = True
+            else:
+                self.facing_direction = False
+        
+
+        if self.count_knock_back > 0:
+            self.count_knock_back -= 1
+            if not self.flip:
+                target.rect.x += 50
+            else: 
+                target.rect.x -= 50
+
 
         # get key pressed
         key = pygame.key.get_pressed()
@@ -139,11 +170,15 @@ class Fighter():
              # movimento
             if self.player == 1:
                 if key[pygame.K_a]:
-                    self.facing_direction = not self.facing_direction
+                    if not self.flip:
+                        self.facing_direction = not self.facing_direction
+                    
                     
                     dx = -SPEED
                     self.running = True
                 elif key[pygame.K_d]:
+                    if self.flip:
+                        self.facing_direction = not self.facing_direction
                     dx = SPEED   
                     self.running = True
 
@@ -154,11 +189,11 @@ class Fighter():
                 # attacks
                 if key[pygame.K_c]:
                     self.attack1(target)
-                    self.attack_type = 1
+                    
                 
                 if key[pygame.K_v]:
                     self.attack2(target)
-                    self.attack_type = 2
+                    
                     
                      
                 if pressed_keys[pygame.K_e]:
@@ -179,10 +214,13 @@ class Fighter():
                 # movimento
                 if self.player == 2:
                     if key[pygame.K_LEFT]:
+                        if not self.flip:
+                            self.facing_direction = not self.facing_direction
                         dx = -SPEED
                         self.running = True
                     elif key[pygame.K_RIGHT]:
-                        self.facing_direction = not self.facing_direction
+                        if self.flip:
+                            self.facing_direction = not self.facing_direction
                         dx = SPEED   
                         self.running = True
                     # pulo
@@ -241,39 +279,79 @@ class Fighter():
         else:
             self.flip = True 
 
-        #update player position
+        #update player position with dash
         self.rect.x += self.dashx
         if self.dashx == 0:
             self.rect.x += dx
             self.rect.y += dy
 
 
+    def execute_attack(self, target):
+        self.attack_sound.play()
+        if self.attack_type == 1:
+            if not self.flip:
+                attack_rect = pygame.Rect(
+                    self.rect.right,
+                    self.rect.y - ((self.attack_hitbox_modificator_1[1] * self.rect.height) - self.rect.height),
+                    self.rect.width * self.attack_hitbox_modificator_1[0],
+                    self.rect.height * self.attack_hitbox_modificator_1[1]
+                )
+                print("MOD 1:", self.attack_hitbox_modificator_1[1])
+                print("OFFSET:", (self.attack_hitbox_modificator_1[1] * self.rect.height) - self.rect.height)
+            else:
+                attack_rect = pygame.Rect(
+                    self.rect.left - self.rect.width * self.attack_hitbox_modificator_1[0],
+                    self.rect.y - ((self.attack_hitbox_modificator_1[1] * self.rect.height) - self.rect.height),
+                    self.rect.width * self.attack_hitbox_modificator_1[0],
+                    self.rect.height * self.attack_hitbox_modificator_1[1]
+            )
+            if attack_rect.colliderect(target.rect):
+                self.ult_points += 1
+                target.health -= self.dano1 - target.defesa
+                target.hit = True
+
+
+        elif self.attack_type == 2:
+            if not self.flip:
+                attack_rect = pygame.Rect(
+                    self.rect.right,
+                    self.rect.y + ((self.attack_hitbox_modificator_2[1] * self.rect.height) - self.rect.height),
+                    self.rect.width * self.attack_hitbox_modificator_2[0],
+                    self.rect.height * self.attack_hitbox_modificator_2[1]
+                )
+            else:
+                attack_rect = pygame.Rect(
+                    self.rect.left - self.rect.width * self.attack_hitbox_modificator_2[0],
+                    self.rect.y + ((self.attack_hitbox_modificator_2[1] * self.rect.height) - self.rect.height),
+                    self.rect.width * self.attack_hitbox_modificator_2[0],
+                    self.rect.height * self.attack_hitbox_modificator_2[1]
+            )
+            if attack_rect.colliderect(target.rect):
+                self.ult_points += 1
+                target.health -= self.dano2 - target.defesa
+                target.hit = True
+
+
+    # desenha hitbox para debug
+        #pygame.draw.rect(self.screen, 'green', attack_rect)
+
+        
 
     def attack1(self, target):
         if self.attack_coldown == 0:
             # execute attack
-            self.attack_sound.play()
             self.attcking = True
-            
-            attackin_rect = pygame.Rect(self.rect.centerx - (self.attack_hitbox_modificator[0]* self.rect.width * self.flip), self.rect.top - (self.rect.height * self.attack_hitbox_modificator[1] - self.rect.height), self.attack_hitbox_modificator[0] * self.rect.width, self.rect.height * self.attack_hitbox_modificator[1]) 
-            #pygame.draw.rect(surface, 'green', attackin_rect, attackin_rect.width)
-            if attackin_rect.colliderect(target.rect):
-                self.ult_points += 1
-                target.health -= self.dano - target.defesa
-                target.hit = True
+            self.attack_type = 1
+
 
     def attack2(self, target):
         if self.attack_coldown == 0:
             # execute attack
-            self.attack_sound.play()
             self.attcking = True
+            self.attack_type = 2
             
-            attackin_rect = pygame.Rect(self.rect.centerx - (self.attack_hitbox_modificator[0]* self.rect.width * self.flip), self.rect.top - (self.rect.height * self.attack_hitbox_modificator[1] - self.rect.height), self.attack_hitbox_modificator[0] * self.rect.width, self.rect.height * self.attack_hitbox_modificator[1]) 
-            #pygame.draw.rect(surface, 'green', attackin_rect, attackin_rect.width)
-            if attackin_rect.colliderect(target.rect):
-                self.ult_points+=1
-                target.health -= self.dano - target.defesa
-                target.hit = True
+            
+    
 
     def hab1(self):
         print('habilidade 1')

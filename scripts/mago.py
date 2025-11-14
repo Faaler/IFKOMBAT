@@ -9,10 +9,10 @@ class Mago(Fighter):
         super().__init__(player,flip,inicial_postion, data, sprite_sheet, animation_steps,sound, status, screen)
         self.dash_cooldown = status['dash_coldown']
         self.last_dash = 0
-        self.dash = False
+        self.dash = True
         
 
-        print(f'valor herdado: {self.health}')   
+           
 
 
     def update(self):
@@ -46,7 +46,12 @@ class Mago(Fighter):
         elif self.attcking and pygame.time.get_ticks() - self.update_time > self.attack_animation_cooldown:
             self.frame_index += 1
             self.update_time = pygame.time.get_ticks()
-
+            if self.frame_index == 4 and self.attack_type == 1:
+                self.execute_attack(self.target)
+                self.attack_type = 0
+            elif self.attack_type == 2 and self.frame_index == 4:
+                self.execute_attack(self.target)
+                self.attack_type = 0
 
 
         # check if animation has fineshed
@@ -56,73 +61,119 @@ class Mago(Fighter):
             else:
                 self.frame_index = 0
                 # check attack is over
-                if self.action == 3 or self.action == 4:
+                if self.action == 3: # ataque 1
                     self.attcking = False
-                    self.attack_coldown = 25
+                    self.attack_coldown = self.max_att_coldown_1
+                if self.action == 4: # ataque 2
+                    self.attcking = False
+                    self.attack_coldown = self.max_att_coldown_2
                 if self.action == 5:
                     self.hit = False
                     # if player is in middle of an attack then the attack stops
                     self.attcking = False
                     self.attack_coldown = 20
 
-        if self.dash:
+        if not self.dash:
             if pygame.time.get_ticks() - self.last_dash > self.dash_cooldown:
-                self.dash = False
+                self.dash = True
                  
         projetil_group.draw(self.screen)
         projetil_group.update()
 
-    def attack2(self, target):
-        if self.attack_coldown == 0:
-            # execute attack
-            self.attack_sound.play()
-            self.attcking = True
-            
-            attackin_rect = pygame.Rect(self.rect.centerx - (self.attack_hitbox_modificator[0]* self.rect.width * self.flip), self.rect.top - (self.rect.height * self.attack_hitbox_modificator[1] - self.rect.height), self.attack_hitbox_modificator[0] * self.rect.width, self.rect.height * self.attack_hitbox_modificator[1]) 
-            #pygame.draw.rect(surface, 'green', attackin_rect, attackin_rect.width)
-            if attackin_rect.colliderect(target.rect):
+    def execute_attack(self, target):
+        self.attack_sound.play()
+        if self.attack_type == 1:
+            if not self.flip:
+                attack_rect = pygame.Rect(
+                    self.rect.right,
+                    self.rect.y - ((self.attack_hitbox_modificator_1[1] * self.rect.height) - self.rect.height),
+                    self.rect.width * self.attack_hitbox_modificator_1[0],
+                    self.rect.height * self.attack_hitbox_modificator_1[1]
+                )
+                
+            else:
+                attack_rect = pygame.Rect(
+                    self.rect.left - self.rect.width * self.attack_hitbox_modificator_1[0],
+                    self.rect.y - ((self.attack_hitbox_modificator_1[1] * self.rect.height) - self.rect.height),
+                    self.rect.width * self.attack_hitbox_modificator_1[0],
+                    self.rect.height * self.attack_hitbox_modificator_1[1]
+            )
+            if attack_rect.colliderect(target.rect):
                 self.ult_points += 1
-                target.health -= self.dano - target.defesa
-                if self.health <= 100 - self.dano/2:
-                    self.health += self.dano/2
+                target.health -= self.dano1 - target.defesa
+                self.count_knock_back = self.knock_back
+                target.hit = True
+
+
+        elif self.attack_type == 2:
+            if not self.flip:
+                attack_rect = pygame.Rect(
+                    self.rect.right,
+                    self.rect.y - ((self.attack_hitbox_modificator_2[1] * self.rect.height) - self.rect.height),
+                    self.rect.width * self.attack_hitbox_modificator_2[0],
+                    self.rect.height * self.attack_hitbox_modificator_2[1]
+                )
+            else:
+                attack_rect = pygame.Rect(
+                    self.rect.left - self.rect.width * self.attack_hitbox_modificator_2[0],
+                    self.rect.y - ((self.attack_hitbox_modificator_2[1] * self.rect.height) - self.rect.height),
+                    self.rect.width * self.attack_hitbox_modificator_2[0],
+                    self.rect.height * self.attack_hitbox_modificator_2[1]
+            )
+            if attack_rect.colliderect(target.rect):
+                self.ult_points += 1
+                target.health -= self.dano2 - target.defesa
+                self.count_knock_back = self.knock_back
+                if self.health <= 100 - self.dano2/2:
+                    self.health += self.dano2/2
                 elif self.health < 100:
                     self.health += 100 - self.health
                 target.hit = True
 
 
-    def hab1(self):
-        if self.dash == False:
-            self.dash = True
-            self.last_dash = pygame.time.get_ticks()
+    # desenha hitbox para debug
+        #pygame.draw.rect(self.screen, 'green', attack_rect)
                 
+                
+                
+                
+                
+                
+               
+
+
+    def hab1(self):
+        if self.dash:
+            self.dash = False
+            self.last_dash = pygame.time.get_ticks()
             if self.facing_direction == False:
                 self.dashx = -1
             else:
                 self.dashx = 1
 
     def ult(self):
-        Projetil_ULT(ult_surf, self.rect.left, self.rect.bottom, self.facing_direction, self.target, projetil_group)
+        Projetil_ULT(ult_surf, self.rect.left, self.rect.bottom, self.target, self.screen_width, projetil_group)
         
 
 class Projetil_ULT(pygame.sprite.Sprite):
-    def __init__(self,surf,x,y,direcao, target, groups):
+    def __init__(self,surf,x,y,target, screen_width, groups):
         super().__init__(groups)
         self.image = surf
         self.rect = self.image.get_rect(bottomleft = (x,y))
-        self.direcao = direcao
+        self.screen_width = screen_width
         self.target = target
-        self.speed = 10
+        self.speed = 18
         
         
 
     def update(self):
         
         self.check_colision()
-        if self.direcao:
+        if self.target.flip:
             self.rect.centerx += self.speed
         else:
             self.rect.centerx -= self.speed
-        if self.rect.left > 1100 or self.rect.right < 0:
+        if self.rect.left > self.screen_width or self.rect.right < 0:
             self.kill()
 
     def check_colision(self):

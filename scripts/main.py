@@ -1,14 +1,15 @@
 import pygame
 from pygame import mixer
 from fighter import Fighter
-from mago import Mago, Projetil_ULT
+from mago import Mago
+from guerreiro import Guerreiro
 
 pygame.init()
 mixer.init()
 
 # criando tela do jogo
-SCREEN_WIDTH = 1000
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 1400
+SCREEN_HEIGHT = 840
 
 # set framerate
 clock = pygame.time.Clock()
@@ -40,32 +41,41 @@ PLAYER2_INICIAL_POSITION = [700, 360]
 
 # defininado informação dos personagens
 caracters_status = [
-    {'nome': 'Guerreiro',
-     'dano' : 18,
+    {
+     'nome': 'Guerreiro',
+     'dano1' : 16,
+     'dano2' : 22,
      'defesa': 6,
+     'speed': 8,
      'largura': 120,
      'altura': 290,
      'posicao_inicial': [200, 270],
      'attack_animation_cooldown' : 90,
-     'attack_box_size': [2.7,1],
+     'attack_box_size_1': [2.2,1.1],
+     'attack_box_size_2': [2,1.09],
      'ult_min': 3,
-     'attack_coldwon1': 10,
-     'attack_coldwon2': 35
+     'attack_coldwon1': 15,
+     'attack_coldwon2': 55,
+     'knock_back': 3
 
     },
      {
      'nome': 'Mago',
-     'dano' : 10,
+     'dano1' : 10,
+     'dano2' : 14,
      'defesa': 2,
+     'speed': 12,
      'largura': 100,
      'altura': 200 ,
      'posicao_inicial': [700, 360],
-     'attack_animation_cooldown' : 500,
-     'attack_box_size': [4, 2],
-     'dash_coldown': 70,
+     'attack_animation_cooldown' : 50,
+     'attack_box_size_1': [3.8, 2],
+     'attack_box_size_2': [4, 2],
+     'dash_coldown': 500,
      'ult_min': 5,
      'attack_coldwon1': 10,
-     'attack_coldwon2': 70
+     'attack_coldwon2': 45,
+     'knock_back': 1
      }
 ]
 
@@ -114,11 +124,11 @@ def draw_text(text, font, text_col, x, y):
 esc1 = int(input('player 1: 1- guerriero, 2 - mago '))
 esc2 = int(input('player 1: 1- guerriero, 2 - mago '))
 if esc1 == 1:
-    fighter_1 = Fighter(1, False,PLAYER1_INICIAL_POSITION, PLAYER1_DATA, player1_sheet, WARRIOR_ANIMATION_STEPS, sword_fx, caracters_status[0], screen)
+    fighter_1 = Guerreiro(1, False,PLAYER1_INICIAL_POSITION, PLAYER1_DATA, player1_sheet, WARRIOR_ANIMATION_STEPS, sword_fx, caracters_status[0], screen)
 else:
     fighter_1 = Mago(1, False,PLAYER1_INICIAL_POSITION, PLAYER2_DATA, player2_sheet, WIZARD_ANIMATION_STEPS, staff_fx, caracters_status[1], screen)
 if esc2 == 1:
-    fighter_2 = Fighter(2, True,PLAYER2_INICIAL_POSITION, PLAYER1_DATA, player1_sheet, WARRIOR_ANIMATION_STEPS, sword_fx, caracters_status[0], screen)
+    fighter_2 = Guerreiro(2, True,PLAYER2_INICIAL_POSITION, PLAYER1_DATA, player1_sheet, WARRIOR_ANIMATION_STEPS, sword_fx, caracters_status[0], screen)
 else:
     fighter_2 = Mago(2, True,PLAYER2_INICIAL_POSITION, PLAYER2_DATA, player2_sheet, WIZARD_ANIMATION_STEPS, staff_fx, caracters_status[1], screen)
 
