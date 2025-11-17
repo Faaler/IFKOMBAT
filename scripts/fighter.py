@@ -46,6 +46,8 @@ class Fighter():
         self.ult_min = status['ult_min']
         self.knock_back = status['knock_back']
         self.count_knock_back = 0
+        self.stoped = False
+        
         
         
 
@@ -153,7 +155,10 @@ class Fighter():
         self.target = target
         self.screen_height = screen_height
         self.screen_width = screen_width
-        SPEED = self.speed
+        if self.stoped:
+            SPEED = 0
+        else:
+            SPEED = self.speed
         GRAVIDADE = 2
         dx = 0
         dy = 0
@@ -206,20 +211,20 @@ class Fighter():
                     self.vel_y = - self.jump_high
                     self.jump = True
                 # attacks
-                if key[pygame.K_e]:
+                if key[pygame.K_c]:
                     self.attack1(target)
                     
                 
-                if key[pygame.K_r]:
+                if key[pygame.K_v]:
                     self.attack2(target)
                     
                     
                      
-                if pressed_keys[pygame.K_v]:
+                if pressed_keys[pygame.K_g]:
                     self.hab1()
-                if pressed_keys[pygame.K_c]:
+                if pressed_keys[pygame.K_h]:
                     self.hab2()
-                if pressed_keys[pygame.K_x]:
+                if pressed_keys[pygame.K_j]:
                     if self.ult_points >= self.ult_min:
                         self.ult()
                         self.ult_points -= self.ult_min
@@ -247,18 +252,18 @@ class Fighter():
                     self.vel_y = - self.jump_high
                     self.jump = True
                 # attacks
-                if key[pygame.K_p]:
+                if key[pygame.K_KP_1]:
                     self.attack1(target)
                     self.attack_type = 1
                 
-                if key[pygame.K_o]:
+                if key[pygame.K_KP_2]:
                     self.attack2(target)
                     self.attack_type = 2
-                if pressed_keys[pygame.K_l]:
+                if pressed_keys[pygame.K_KP_4]:
                     self.hab1()
-                if pressed_keys[pygame.K_k]:
+                if pressed_keys[pygame.K_KP_5]:
                     self.hab2()
-                if pressed_keys[pygame.K_j]:
+                if pressed_keys[pygame.K_KP_6]:
                     if self.ult_points >= 3:
                         self.ult()
                         self.ult_points -= 3
@@ -392,6 +397,16 @@ class Fighter():
 
     def draw(self):
         img = pygame.transform.flip(self.image, self.flip, False)
-        #pygame.draw.rect(surface, 'red', self.rect, self.size)
+        bottom_height = 5
+        bottom_rect = pygame.Rect(
+            self.rect.x,
+            self.rect.bottom + bottom_height,
+            self.rect.width - 10,
+            bottom_height
+        )
+        if self.player == 1:
+            pygame.draw.rect(self.screen, 'blue', bottom_rect)
+        else:
+            pygame.draw.rect(self.screen, 'red', bottom_rect)
         self.screen.blit(img, (self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1]* self.image_scale)))
         

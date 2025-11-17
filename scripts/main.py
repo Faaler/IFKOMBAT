@@ -43,8 +43,8 @@ PLAYER2_INICIAL_POSITION = [700, 360]
 caracters_status = [
     {
      'nome': 'Guerreiro',
-     'dano1' : 8,
-     'dano2' : 17,
+     'dano1' : 10,
+     'dano2' : 18,
      'defesa': 3,
      'speed': 8,
      'jump_high': 30,
@@ -56,13 +56,8 @@ caracters_status = [
      'attack_box_size_1': [2.2,1.1],
      'attack_box_size_2': [2,1.09],
      'ult_min': 3,
-<<<<<<< HEAD
      'attack_coldwon1': 10,
      'attack_coldwon2': 55,
-=======
-     'attack_coldwon1': 15,
-     'attack_coldwon2': 50,
->>>>>>> 3fa89c5cc11c21c61f6ef72fbf24a9e0254f1031
      'knock_back': 3
 
     },
@@ -77,11 +72,11 @@ caracters_status = [
      'altura': 200 ,
      'posicao_inicial': [700, 360],
      'attack_animation_cooldown_1' : 50,
-     'attack_animation_cooldown_2' : 75,
+     'attack_animation_cooldown_2' : 80,
      'attack_box_size_1': [3.8, 2],
      'attack_box_size_2': [3.5, 2],
      'dash_coldown': 600,
-     'ult_min': 5,
+     'ult_min': 6,
      'attack_coldwon1': 10,
      'attack_coldwon2': 45,
      'knock_back': 1

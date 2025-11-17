@@ -6,16 +6,11 @@ acid_group = pygame.sprite.Group()
 class Guerreiro(Fighter):
     def __init__(self, player,flip,inicial_postion, data, sprite_sheet, animation_steps,sound, status, screen):
         super().__init__(player,flip,inicial_postion, data, sprite_sheet, animation_steps,sound, status, screen)
-<<<<<<< HEAD
         self.acid_exist = False
         self.case = 0
         self.ima_limite = 0
         self.oldspeed = 0
         self.has_ima = False
-=======
-        self.hab2_cooldown = 5000
-        self.last_hab2 = 0
->>>>>>> 3fa89c5cc11c21c61f6ef72fbf24a9e0254f1031
 
 
     def execute_attack(self, target):
@@ -63,7 +58,6 @@ class Guerreiro(Fighter):
                 self.count_knock_back = self.knock_back * 3
                 target.hit = True
 
-<<<<<<< HEAD
     def update(self):
         if self.hit:
             self.attcking = False
@@ -138,19 +132,19 @@ class Guerreiro(Fighter):
         if self.case == 1:
             if self.target.rect.x - self.rect.x > self.ima_limite:
                 self.has_ima = True
-                self.target.speed = 0
+                self.target.stoped = True
                 self.target.rect.x -= 10
             else:
-                self.target.speed = self.oldspeed
+                self.target.stoped = False
                 self.case = 0
                 self.has_ima = False
         if self.case == 2:
             if self.rect.x - self.target.rect.x > self.ima_limite:
                 self.has_ima = True
-                self.target.speed = 0
+                self.target.stoped = True
                 self.target.rect.x += 10
             else:
-                self.target.speed = self.oldspeed
+                self.target.stoped = False
                 self.case = 0
                 self.has_ima = False
 
@@ -192,9 +186,3 @@ class Acid(pygame.sprite.Sprite):
         else:
             self.target.speed = self.oldspeed
 
-=======
-
-    def hab2(self):
-        if pygame.time.get_ticks() -  self.last_hab2 > self.hab2_cooldown:
-            pass
->>>>>>> 3fa89c5cc11c21c61f6ef72fbf24a9e0254f1031
