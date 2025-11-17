@@ -206,20 +206,20 @@ class Fighter():
                     self.vel_y = - self.jump_high
                     self.jump = True
                 # attacks
-                if key[pygame.K_c]:
+                if key[pygame.K_e]:
                     self.attack1(target)
                     
                 
-                if key[pygame.K_v]:
+                if key[pygame.K_r]:
                     self.attack2(target)
                     
                     
                      
-                if pressed_keys[pygame.K_e]:
+                if pressed_keys[pygame.K_v]:
                     self.hab1()
-                if pressed_keys[pygame.K_r]:
+                if pressed_keys[pygame.K_c]:
                     self.hab2()
-                if pressed_keys[pygame.K_t]:
+                if pressed_keys[pygame.K_x]:
                     if self.ult_points >= self.ult_min:
                         self.ult()
                         self.ult_points -= self.ult_min
@@ -247,18 +247,18 @@ class Fighter():
                     self.vel_y = - self.jump_high
                     self.jump = True
                 # attacks
-                if key[pygame.K_l]:
+                if key[pygame.K_p]:
                     self.attack1(target)
                     self.attack_type = 1
                 
-                if key[pygame.K_k]:
+                if key[pygame.K_o]:
                     self.attack2(target)
                     self.attack_type = 2
-                if pressed_keys[pygame.K_p]:
+                if pressed_keys[pygame.K_l]:
                     self.hab1()
-                if pressed_keys[pygame.K_o]:
+                if pressed_keys[pygame.K_k]:
                     self.hab2()
-                if pressed_keys[pygame.K_i]:
+                if pressed_keys[pygame.K_j]:
                     if self.ult_points >= 3:
                         self.ult()
                         self.ult_points -= 3

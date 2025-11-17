@@ -56,8 +56,13 @@ caracters_status = [
      'attack_box_size_1': [2.2,1.1],
      'attack_box_size_2': [2,1.09],
      'ult_min': 3,
+<<<<<<< HEAD
      'attack_coldwon1': 10,
      'attack_coldwon2': 55,
+=======
+     'attack_coldwon1': 15,
+     'attack_coldwon2': 50,
+>>>>>>> 3fa89c5cc11c21c61f6ef72fbf24a9e0254f1031
      'knock_back': 3
 
     },
