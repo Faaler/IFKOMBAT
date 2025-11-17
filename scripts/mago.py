@@ -10,12 +10,20 @@ class Mago(Fighter):
         self.dash_cooldown = status['dash_coldown']
         self.last_dash = 0
         self.dash = True
+        self.slow = False
+        self.time_apply_slow = 0
+        
         
 
            
 
 
     def update(self):
+        if self.hit:
+            self.attcking = False
+            self.attack_type = 0
+            self.attack_coldown = 5
+        
         #check player action
         if self.health <= 0:
             self.health = 0
@@ -36,42 +44,7 @@ class Mago(Fighter):
         else:
             self.update_action(0)
         
-        # realiza animações
-        animation_cooldown = 80
-        self.image = self.animation_list[self.action][self.frame_index]
-        #check  time since last update
-        if pygame.time.get_ticks() - self.update_time > animation_cooldown and self.attcking == False:
-            self.frame_index += 1
-            self.update_time = pygame.time.get_ticks()
-        elif self.attcking and pygame.time.get_ticks() - self.update_time > self.attack_animation_cooldown:
-            self.frame_index += 1
-            self.update_time = pygame.time.get_ticks()
-            if self.frame_index == 4 and self.attack_type == 1:
-                self.execute_attack(self.target)
-                self.attack_type = 0
-            elif self.attack_type == 2 and self.frame_index == 4:
-                self.execute_attack(self.target)
-                self.attack_type = 0
-
-
-        # check if animation has fineshed
-        if self.frame_index >= len(self.animation_list[self.action]):
-            if self.alive == False:
-                self.frame_index = len(self.animation_list[self.action]) - 1
-            else:
-                self.frame_index = 0
-                # check attack is over
-                if self.action == 3: # ataque 1
-                    self.attcking = False
-                    self.attack_coldown = self.max_att_coldown_1
-                if self.action == 4: # ataque 2
-                    self.attcking = False
-                    self.attack_coldown = self.max_att_coldown_2
-                if self.action == 5:
-                    self.hit = False
-                    # if player is in middle of an attack then the attack stops
-                    self.attcking = False
-                    self.attack_coldown = 20
+        self.animar()
 
         if not self.dash:
             if pygame.time.get_ticks() - self.last_dash > self.dash_cooldown:
@@ -151,8 +124,38 @@ class Mago(Fighter):
             else:
                 self.dashx = 1
 
+
+    def hab2(self):
+        pass
+
     def ult(self):
         Projetil_ULT(ult_surf, self.rect.left, self.rect.bottom, self.target, self.screen_width, projetil_group)
+
+
+
+    # def exec_slow(self):
+    #     if not self.slow:
+    #         if not self.flip:
+    #                 attack_rect = pygame.Rect(
+    #                     self.rect.right,
+    #                     self.rect.y - ((self.attack_hitbox_modificator_1[1] * self.rect.height) - self.rect.height),
+    #                     self.rect.width * self.attack_hitbox_modificator_1[0],
+    #                     self.rect.height * self.attack_hitbox_modificator_1[1]
+    #                 )
+    #                 print("MOD 1:", self.attack_hitbox_modificator_1[1])
+    #                 print("OFFSET:", (self.attack_hitbox_modificator_1[1] * self.rect.height) - self.rect.height)
+    #         else:
+    #                 attack_rect = pygame.Rect(
+    #                     self.rect.left - self.rect.width * self.attack_hitbox_modificator_1[0],
+    #                     self.rect.y - ((self.attack_hitbox_modificator_1[1] * self.rect.height) - self.rect.height),
+    #                     self.rect.width * self.attack_hitbox_modificator_1[0],
+    #                     self.rect.height * self.attack_hitbox_modificator_1[1]
+    #             )
+    #         if attack_rect.colliderect(self.target.rect):
+    #             self.slow = True
+    #             self.time_apply_slow = pygame.time.get_ticks()
+    #             self.target.speed = 
+                
         
 
 class Projetil_ULT(pygame.sprite.Sprite):

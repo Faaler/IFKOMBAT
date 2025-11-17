@@ -20,6 +20,7 @@ class Fighter():
         self.vel_y = 0
         self.running = False
         self.jump = False
+        self.jump_high = status['jump_high']
         self.dashx = 0
         self.attack_type = 0
         self.attcking = False
@@ -35,7 +36,8 @@ class Fighter():
         self.defesa = status['defesa'] #status
         self.facing_direction = True
         self.attack_sound = sound
-        self.attack_animation_cooldown = status['attack_animation_cooldown']
+        self.attack_animation_cooldown_1 = status['attack_animation_cooldown_1']
+        self.attack_animation_cooldown_2 = status['attack_animation_cooldown_2']
         self.attack_hitbox_modificator_1 = status['attack_box_size_1']
         self.attack_hitbox_modificator_2 = status['attack_box_size_2']
         self.screen = screen
@@ -59,46 +61,34 @@ class Fighter():
             animation_list.append(temp_img_list)
         return animation_list
 
-
-
-    # animation updates
-    def update(self):
-        #check player action
-        if self.health <= 0:
-            self.health = 0
-            self.alive = False
-            self.update_action(6)
-        elif self.hit:
-            self.update_action(5)
-        elif self.attcking:
-            if self.attack_type == 1:
-                self.update_action(3)
-            elif self.attack_type == 2:
-                self.update_action(4)
-                
-        elif self.jump:
-            self.update_action(2)
-        elif self.running:
-            self.update_action(1)
-        else:
-            self.update_action(0)
-        
-        # realiza animações
+    def animar(self):
+          # realiza animações
         animation_cooldown = 80
         self.image = self.animation_list[self.action][self.frame_index]
         #check  time since last update
         if pygame.time.get_ticks() - self.update_time > animation_cooldown and self.attcking == False:
             self.frame_index += 1
             self.update_time = pygame.time.get_ticks()
-        elif self.attcking and pygame.time.get_ticks() - self.update_time > self.attack_animation_cooldown:
-            self.frame_index += 1
-            self.update_time = pygame.time.get_ticks()
-            if self.frame_index == 4 and self.attack_type == 1:
-                self.execute_attack(self.target)
-                self.attack_type = 0
-            elif self.attack_type == 2 and self.frame_index == 3:
-                self.execute_attack(self.target)
-                self.attack_type = 0
+        elif self.attack_type == 1:
+            if self.attcking and pygame.time.get_ticks() - self.update_time > self.attack_animation_cooldown_1:
+                self.frame_index += 1
+                self.update_time = pygame.time.get_ticks()
+                if self.frame_index == 4:
+                    self.execute_attack(self.target)
+                    if self.frame_index >= len(self.animation_list[self.action]):
+                        self.attack_type = 0
+        elif self.attack_type == 2:
+            if self.attcking and pygame.time.get_ticks() - self.update_time > self.attack_animation_cooldown_2:
+                self.frame_index += 1
+                self.update_time = pygame.time.get_ticks()
+                if self.frame_index == 3:
+                    self.execute_attack(self.target)
+                    if self.frame_index >= len(self.animation_list[self.action]):
+                        self.attack_type = 0
+        
+
+
+       
 
         
 
@@ -119,10 +109,39 @@ class Fighter():
                     self.attack_coldown = self.max_att_coldown_2
                 if self.action == 5:
                     self.hit = False
-                    # if player is in middle of an attack then the attack stops
-                    self.attcking = False
-                    self.attack_coldown = 20
+                    
+                    
+
+    # animation updates
+    def update(self):
+        if self.hit:
+            self.attcking = False
+            self.attack_type = 0
+            self.attack_coldown = 5
+
+
+        #check player action
+        if self.health <= 0:
+            self.health = 0
+            self.alive = False
+            self.update_action(6)
+        elif self.hit:
+            self.update_action(5)
+        elif self.attcking:
+            if self.attack_type == 1:
+                self.update_action(3)
+            elif self.attack_type == 2:
+                self.update_action(4)
                 
+        elif self.jump:
+            self.update_action(2)
+        elif self.running:
+            self.update_action(1)
+        else:
+            self.update_action(0)
+        
+      
+        self.animar() 
 
 
         
@@ -184,7 +203,7 @@ class Fighter():
 
                 # pulo
                 if key[pygame.K_w] and self.jump == False:
-                    self.vel_y = -30
+                    self.vel_y = - self.jump_high
                     self.jump = True
                 # attacks
                 if key[pygame.K_c]:
@@ -225,7 +244,7 @@ class Fighter():
                         self.running = True
                     # pulo
                 if key[pygame.K_UP] and self.jump == False:
-                    self.vel_y = -30
+                    self.vel_y = - self.jump_high
                     self.jump = True
                 # attacks
                 if key[pygame.K_l]:
@@ -250,7 +269,7 @@ class Fighter():
         dy += self.vel_y
         
         # aplicar dash
-        if self.dashx > -120 and self.dashx < 120 and self.dashx != 0:
+        if self.dashx > -130 and self.dashx < 130 and self.dashx != 0:
             if self.dashx < 0:
                 self.dashx -= 30
             else:
