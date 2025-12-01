@@ -83,7 +83,7 @@ class Fighter():
             if self.attcking and pygame.time.get_ticks() - self.update_time > self.attack_animation_cooldown_2:
                 self.frame_index += 1
                 self.update_time = pygame.time.get_ticks()
-                if self.frame_index == 3:
+                if self.frame_index == 4:
                     self.execute_attack(self.target)
                     if self.frame_index >= len(self.animation_list[self.action]):
                         self.attack_type = 0
@@ -227,7 +227,7 @@ class Fighter():
                 if pressed_keys[pygame.K_j]:
                     if self.ult_points >= self.ult_min:
                         self.ult()
-                        self.ult_points -= self.ult_min
+                        
 
                 
                     
@@ -264,9 +264,9 @@ class Fighter():
                 if pressed_keys[pygame.K_KP_5]:
                     self.hab2()
                 if pressed_keys[pygame.K_KP_6]:
-                    if self.ult_points >= 3:
+                    if self.ult_points >= self.ult_min:
                         self.ult()
-                        self.ult_points -= 3
+                        
                 
 
         # aplicar gravidade
