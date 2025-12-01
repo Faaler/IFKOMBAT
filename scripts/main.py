@@ -60,7 +60,7 @@ caracters_status = [
      'attack_coldwon2': 55,
      'knock_back': 3
 
-    },
+    }, 
      {
      'nome': 'Mago',
      'dano1' : 7,
