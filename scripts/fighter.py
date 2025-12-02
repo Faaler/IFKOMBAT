@@ -1,6 +1,7 @@
 import pygame
 
 
+
 class Fighter():
     def __init__(self, player,flip,inicial_postion, data, sprite_sheet, animation_steps,sound, status, screen):
         self.inicial_position = inicial_postion

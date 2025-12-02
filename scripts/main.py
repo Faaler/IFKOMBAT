@@ -3,6 +3,7 @@ from pygame import mixer
 from fighter import Fighter
 from mago import Mago
 from guerreiro import Guerreiro
+from bots import Bot_player, Bot_mago, Bot_guerreiro
 
 pygame.init()
 mixer.init()
@@ -126,15 +127,17 @@ def draw_text(text, font, text_col, x, y):
 
 # create players instances
 esc1 = int(input('player 1: 1- guerriero, 2 - mago '))
-esc2 = int(input('player 1: 1- guerriero, 2 - mago '))
+esc2 = int(input('player 1: 1- guerriero, 2 - mago, 0 - playerbot'))
 if esc1 == 1:
     fighter_1 = Guerreiro(1, False,PLAYER1_INICIAL_POSITION, PLAYER1_DATA, player1_sheet, WARRIOR_ANIMATION_STEPS, sword_fx, caracters_status[0], screen)
 else:
     fighter_1 = Mago(1, False,PLAYER1_INICIAL_POSITION, PLAYER2_DATA, player2_sheet, WIZARD_ANIMATION_STEPS, staff_fx, caracters_status[1], screen)
 if esc2 == 1:
     fighter_2 = Guerreiro(2, True,PLAYER2_INICIAL_POSITION, PLAYER1_DATA, player1_sheet, WARRIOR_ANIMATION_STEPS, sword_fx, caracters_status[0], screen)
-else:
+elif esc2 == 2:
     fighter_2 = Mago(2, True,PLAYER2_INICIAL_POSITION, PLAYER2_DATA, player2_sheet, WIZARD_ANIMATION_STEPS, staff_fx, caracters_status[1], screen)
+else:
+    fighter_2 = Bot_guerreiro(2, True,PLAYER2_INICIAL_POSITION, PLAYER1_DATA, player1_sheet, WARRIOR_ANIMATION_STEPS, sword_fx, caracters_status[0], screen)
 
 
 

@@ -408,3 +408,38 @@ class Fighter():
     def draw(self, surface):
         img = pygame.transform.flip(self.image, self.flip, False)
         surface.blit(img, (self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1]* self.image_scale)))
+
+
+
+
+
+
+  # -----------------------------------
+        # PRIORIDADE 1: DISTÂNCIA DE COMBATE
+        # -----------------------------------
+        # if dist_abs > ZONA_LONGO:
+        #     # longe demais → aproximar
+        #     dx = SPEED if distancia > 0 else -SPEED
+        #     self.running = True
+
+        # elif ZONA_PERTO < dist_abs <= ZONA_LONGO:
+        #     # distância ideal → atacar
+        #     dx = 0
+        #     self.running = False
+
+        #     if self.attack_coldown == 0:
+        #         if random.randint(0, 10) < 6:
+        #             self.attack1(target)
+        #         else:
+        #             self.attack2(target)
+
+        # elif dist_abs <= ZONA_PERTO:
+        #     # muito perto → recuar
+        #     dx = -SPEED if distancia > 0 else SPEED
+        #     self.running = True
+
+        # else:
+        #     # -----------------------------------
+        #     # PRIORIDADE 2: MOVIMENTO ALEATÓRIO
+        #     # (somente quando fora do alcance)
+        #     # -----------------------------------
