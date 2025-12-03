@@ -272,7 +272,7 @@ class Bot_mago(Mago):
             self.last_dash = pygame.time.get_ticks()
             self.dash = False
                             
-        if self.ult_points >= 6 and random.randint(0, 150) == 1:
+        if self.ult_points >= self.ult_min and random.randint(0, 60) == 1 and not self.jump:
             self.ult()
                 
 
@@ -319,7 +319,6 @@ class Bot_mago(Mago):
 class Bot_guerreiro(Guerreiro):
     def __init__(self, player,flip,inicial_postion, data, sprite_sheet, animation_steps,sound, status, screen):
         super().__init__(player,flip,inicial_postion, data, sprite_sheet, animation_steps,sound, status, screen)
-        self.ult_points = 6
 
     def move(self, screen_width, screen_height, target):
         self.target = target
@@ -422,11 +421,11 @@ class Bot_guerreiro(Guerreiro):
             self.vel_y = -self.jump_high
             self.jump = True
                             
-        if random.randint(0, 90) == 1:
+        if random.randint(0, 90) == 1 and self.jump == False:
             self.hab1()
             self.hab2()
 
-        if self.ult_points >= 6 and random.randint(0, 150) == 1:
+        if self.ult_points >= self.ult_min and random.randint(0, 60) == 1 and not self.jump:
             self.ult()
                 
 

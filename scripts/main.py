@@ -87,7 +87,7 @@ caracters_status = [
 
 # uploads
 bg_image = pygame.image.load('./assets/images/background/background.jpg').convert_alpha()
-player1_sheet = pygame.image.load('./assets/images/warrior/Sprites/warrior.png').convert_alpha()
+player1_sheet = pygame.image.load('./assets/images/warrior/Sprites/baldis1.png').convert_alpha()
 player2_sheet = pygame.image.load('./assets/images/wizard/Sprites/wizard.png').convert_alpha()
 fonte = pygame.font.Font('./assets/fonts/turok.ttf', 80) 
 scorefonte = pygame.font.Font('./assets/fonts/turok.ttf', 30) 
