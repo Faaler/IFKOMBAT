@@ -22,6 +22,7 @@ class Mago(Fighter):
         self.old_attspeed_2 = 0
         self.new_attspeed_1 = 0
         self.new_attspeed_2 = 0
+        self.dash_distance = 90
         
         
 
@@ -61,13 +62,13 @@ class Mago(Fighter):
                 self.dash = True
 
         if self.slow:
-            if pygame.time.get_ticks() - self.time_apply_slow < 3000 and not self.slow_applyed:
+            if pygame.time.get_ticks() - self.time_apply_slow < 6000 and not self.slow_applyed:
                 self.target.speed = self.half_speed
                 self.target.jump_high = self.small_jump
                 self.target.attack_animation_cooldown_1 = self.new_attspeed_1
                 self.target.attack_animation_cooldown_2 = self.new_attspeed_2
                 self.slow_applyed = True
-            elif pygame.time.get_ticks() - self.time_apply_slow > 3000 :
+            elif pygame.time.get_ticks() - self.time_apply_slow > 5000 :
                 self.slow = False
                 self.target.speed = self.original_speed
                 self.target.jump_high = self.original_jump
@@ -152,7 +153,7 @@ class Mago(Fighter):
 
     def hab2(self):
         if pygame.time.get_ticks() - self.hab2_last_call > 6000:
-            self.half_speed = self.target.speed / 2
+            self.half_speed = self.target.speed / 2.1
             self.small_jump = self.target.jump_high / 1.2
             self.new_attspeed_1 = self.target.attack_animation_cooldown_1 * 1.5
             self.new_attspeed_2 = self.target.attack_animation_cooldown_2 * 1.5
@@ -165,8 +166,9 @@ class Mago(Fighter):
             self.hab2_last_call = pygame.time.get_ticks()
 
     def ult(self):
-        self.ult_points -= self.ult_min
-        Projetil_ULT(ult_surf, self.rect.left, self.rect.bottom, self.target, self.screen_width, projetil_group)
+        if not self.jump:
+            self.ult_points -= self.ult_min
+            Projetil_ULT(ult_surf, self.rect.left, self.rect.bottom, self.target, self.screen_width, self.target.flip, projetil_group)
 
 
 
@@ -176,16 +178,14 @@ class Mago(Fighter):
                     attack_rect = pygame.Rect(
                         self.rect.right,
                         self.rect.y,
-                        self.rect.width + 50,
+                        self.rect.width + 100,
                         self.rect.height/3 
                     )
-                    print("MOD 1:", self.attack_hitbox_modificator_1[1])
-                    print("OFFSET:", (self.attack_hitbox_modificator_1[1] * self.rect.height) - self.rect.height)
             else:
                     attack_rect = pygame.Rect(
                         self.rect.left - (self.rect.width+60),
                         self.rect.y,
-                        self.rect.width + 50,
+                        self.rect.width + 100,
                         self.rect.height/3
                 )
             pygame.draw.rect(self.screen, 'purple', attack_rect)
@@ -197,20 +197,21 @@ class Mago(Fighter):
         
 
 class Projetil_ULT(pygame.sprite.Sprite):
-    def __init__(self,surf,x,y,target, screen_width, groups):
+    def __init__(self,surf,x,y,target, screen_width, direction, groups):
         super().__init__(groups)
         self.image = surf
         self.rect = self.image.get_rect(bottomleft = (x,y))
         self.screen_width = screen_width
         self.target = target
         self.speed = 14
+        self.direction = direction
         
         
 
     def update(self):
         
         self.check_colision()
-        if self.target.flip:
+        if self.direction:
             self.rect.centerx += self.speed
         else:
             self.rect.centerx -= self.speed
@@ -220,9 +221,11 @@ class Projetil_ULT(pygame.sprite.Sprite):
     def check_colision(self):
         if self.rect.colliderect(self.target.rect):
             self.target.health -= 25
+            self.target.hit = True
+            self.target.target.count_knock_back = 3
             if self.target.target.health <= 95 and self.target.alive:
                 self.target.target.health += 5
-            elif self.target.target.health < 100 and self.tagret.alive:
+            elif self.target.target.health < 100 and self.target.alive:
                 self.target.target.health += 100 - self.target.target.health
             self.kill()
         
