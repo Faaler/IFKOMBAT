@@ -174,7 +174,7 @@ boss_deusa = {
      'dano1' : 10,
      'dano2' : 15,
      'defesa': 3.5,
-     'speed': 6.5,
+     'speed': 7,
      'jump_high': 30,
      'largura': 100,
      'altura': 230,
@@ -184,9 +184,9 @@ boss_deusa = {
      'attack_box_size_2': [1.7, 1],
      'frame_att1': 7,
      'frame_att2': 10,
-     'ult_min': 8,
+     'ult_min': 7,
      'attack_coldwon1': 8,
-     'attack_coldwon2': 25,
+     'attack_coldwon2': 20,
      'knock_back': 1
      }
 
@@ -272,6 +272,12 @@ class Selecao:
         self.texto_info_robo = Texto(tela, "Robo \n ATAQUES: C / V \n HABILIDADES: G - Disparada / H - Bomba Movel / j - Missel Aerio", 300, 650, 30, 'black', scorefonte)
         self.texto_info_paladino = Texto(tela, "Paladino \n ATAQUES: C / V \n HABILIDADES: G - Escuto Divino / H - Pacificacao / j - Na Proxima Vida", 300, 650, 30, 'black', scorefonte)
         self.texto_info_deusa = Texto(tela, "Deusa \n ATAQUES: C / V \n HABILIDADES: G - Roubo de Alma / H - Levitacao / j - Tranfiguracao", 300, 650, 30, 'black', scorefonte)
+        self.texto_info_guerreiro2 = Texto(tela, "Guerreiro \n ATAQUES: 1 / 2 \n HABILIDADES: 4 - Poca de Acido / 5 - Atracao Magnetica / 6 - Piscina de Acido", 300, 650, 30, 'black', scorefonte)
+        self.texto_info_mago2 = Texto(tela, "Mago \n ATAQUES: 1 / 2 \n HABILIDADES: 4 - Avanco Magico / 5 - Lentidao / 6 - Alma do Corvo", 300, 650, 30, 'black', scorefonte)
+        self.texto_info_cavaleiro2 = Texto(tela, "Cavaleiro \n ATAQUES: 1 / 2 \n HABILIDADES: 4 - Dobra de espaco / 5 - Gelo Fino / 6 - Corpo Robusto", 300, 650, 30, 'black', scorefonte)
+        self.texto_info_robo2 = Texto(tela, "Robo \n ATAQUES: 1 / 2 \n HABILIDADES: 4 - Disparada / 5 - Bomba Movel / 6 - Missel Aerio", 300, 650, 30, 'black', scorefonte)
+        self.texto_info_paladino2 = Texto(tela, "Paladino \n ATAQUES: 1 / 2 \n HABILIDADES: 4 - Escuto Divino / 5 - Pacificacao / 6 - Na Proxima Vida", 300, 650, 30, 'black', scorefonte)
+        self.texto_info_deusa2 = Texto(tela, "Deusa \n ATAQUES: 1 / 2 \n HABILIDADES: 4 - Roubo de Alma / 5 - Levitacao / 6 - Tranfiguracao", 300, 650, 30, 'black', scorefonte)
     def atualizar(self):
         proximo_estado = self.nome_inicial
         screen = self.tela
@@ -356,17 +362,17 @@ class Selecao:
                 proximo_estado = 'batalha'
 
             if self.botao2_f1.rect.collidepoint(posicaoMouse):
-                self.texto_info_guerreiro.desenhar()
+                self.texto_info_guerreiro2.desenhar()
             if self.botao2_f2.rect.collidepoint(posicaoMouse):
-                self.texto_info_mago.desenhar()
+                self.texto_info_mago2.desenhar()
             if self.botao2_f3.rect.collidepoint(posicaoMouse):
-                self.texto_info_cavaleiro.desenhar()
+                self.texto_info_cavaleiro2.desenhar()
             if self.botao2_f4.rect.collidepoint(posicaoMouse):
-                self.texto_info_robo.desenhar()
+                self.texto_info_robo2.desenhar()
             if self.botao2_f5.rect.collidepoint(posicaoMouse):
-                self.texto_info_paladino.desenhar()
+                self.texto_info_paladino2.desenhar()
             if self.botao2_f6.rect.collidepoint(posicaoMouse):
-                self.texto_info_deusa.desenhar()    
+                self.texto_info_deusa2.desenhar()    
         elif self.nome_inicial == 'selecaod':
             self.botao_f1.desenhar()
             self.botao_f2.desenhar()

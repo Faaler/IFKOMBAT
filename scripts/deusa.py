@@ -633,11 +633,14 @@ class Deusa(Fighter):
             self.clone = Robo(self.player, self.flip, self.old_position, PLAYER4_DATA, player4_sheet, ROBOT_ANIMATION_STEPS, staff_fx, caracters_status[3], self.screen)
         elif esc1 == 5:
             self.clone = Paladino(self.player, self.flip, self.old_position, PLAYER5_DATA, player5_sheet, PALADINE_ANIMATION_STEPS, staff_fx, caracters_status[4], self.screen)
-        self.clone.health = self.health
         self.clone.num_vitorias = self.num_vitorias
         self.clone.ult_min = 30000
-        self.clone.health += 10
+        if self.health < 85:
+            self.health += 15
+        else:
+            self.clone.health = 100
         self.clone.ult_points = self.ult_points
+        self.clone.health = self.health
         if self.player == 1:
             utils.fighter_1 = self.clone
         else:
