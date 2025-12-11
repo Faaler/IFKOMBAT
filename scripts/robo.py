@@ -1,88 +1,89 @@
-import pygame
-
-
-
-class Fighter():
+import pygame 
+import random
+from fighter import Fighter
+pygame.init()
+pygame.display.set_mode((1,1))
+shot_surf = pygame.image.load('./assets/images/robot/Sprites/Projectile.png').convert_alpha()
+shot_group = pygame.sprite.Group()
+big_projetil = pygame.image.load('./assets/images/robot/Sprites/BigProjetil.png').convert_alpha()
+missil = pygame.image.load('./assets/images/robot/Sprites/missil.png').convert_alpha()
+class Robo(Fighter):
     def __init__(self, player,flip,inicial_postion, data, sprite_sheet, animation_steps,sound, status, screen):
-        self.nome = status['nome']
-        self.inicial_position = inicial_postion
-        self.screen_height = 0
-        self.screen_width = 0
-        self.player = player
-        self.size = data[0]
-        self.image_scale = data[1]
-        self.offset = data[2]
-        self.flip = flip
-        self.animation_list = self.load_images(sprite_sheet, animation_steps)
-        self.action = 0 # 0 - idle, 1 - run, 2 - jump, 3 - attack, 4 - attack2, 5 - hit, 6 - death
-        self.frame_index = 0
-        self.image = self.animation_list[self.action][self.frame_index]
-        self.update_time = pygame.time.get_ticks()
-        self.rect = pygame.Rect((inicial_postion[0], inicial_postion[1], status['largura'], status['altura']))
-        self.vel_y = 0
-        self.running = False
-        self.jump = False
-        self.jump_high = status['jump_high']
-        self.dashx = 0
-        self.attack_type = 0
-        self.attcking = False
-        self.attack_coldown = 0 
-        self.max_att_coldown_1 = status['attack_coldwon1']
-        self.max_att_coldown_2 = status['attack_coldwon2']
-        self.health = 100
-        self.speed = status['speed']
-        self.alive = True
-        self.hit = False
-        self.dano1 = status['dano1'] #status
-        self.dano2 = status['dano2'] # status
-        self.defesa = status['defesa'] #status
-        self.facing_direction = True
-        self.attack_sound = sound
-        self.attack_animation_cooldown_1 = status['attack_animation_cooldown_1']
-        self.attack_animation_cooldown_2 = status['attack_animation_cooldown_2']
-        self.attack_hitbox_modificator_1 = status['attack_box_size_1']
-        self.attack_hitbox_modificator_2 = status['attack_box_size_2']
-        self.screen = screen
-        self.target = 0
-        self.ult_points = 0
-        self.ult_min = status['ult_min']
-        self.knock_back = status['knock_back']
-        self.count_knock_back = 0
-        self.stoped = False
-        self.frame_att1 = status['frame_att1']
-        self.frame_att2 = status['frame_att2']
-        self.knock_resistence = 0
-        self.dash_distance = 0
-        self.repressed = False
-        self.get_target = False
-        self.num_vitorias = 0
-        self.ulted = False
-        self.ult_lastcall = 0
-        
-        
-        
-        
+        super().__init__(player,flip,inicial_postion, data, sprite_sheet, animation_steps,sound, status, screen)
+        self.knock_resistence = 40
+        self.dash_distance = 40
+        self.ulting = False
+        self.ult_animation_cooldown = 100
+        self.frame_ult = 6
 
-    def load_images(self, sprite_sheet, animation_steps):
-        # extraindo imagens dos spritesheets
-        animation_list = []
-        for y, animation in enumerate(animation_steps): # y = numero de iterações desse primeiro loop
-            temp_img_list = []
-            for x in range(animation):
-                temp_img = sprite_sheet.subsurface(x * self.size, y * self.size, self.size, self.size)
-                scaled_temp_img = pygame.transform.scale(temp_img, (self.size * self.image_scale, self.size * self.image_scale))
-                temp_img_list.append(scaled_temp_img)
-            animation_list.append(temp_img_list)
-        return animation_list
+
+
+
+    def execute_attack(self, target):
+        self.attack_sound.play()
+        if self.attack_type == 1:
+            if not self.flip:
+                attack_rect = pygame.Rect(
+                    self.rect.right,
+                    self.rect.y - ((self.attack_hitbox_modificator_1[1] * self.rect.height) - self.rect.height),
+                    self.rect.width * self.attack_hitbox_modificator_1[0],
+                    self.rect.height * self.attack_hitbox_modificator_1[1]
+                )
+            else:
+                attack_rect = pygame.Rect(
+                    self.rect.left - self.rect.width * self.attack_hitbox_modificator_1[0],
+                    self.rect.y - ((self.attack_hitbox_modificator_1[1] * self.rect.height) - self.rect.height),
+                    self.rect.width * self.attack_hitbox_modificator_1[0],
+                    self.rect.height * self.attack_hitbox_modificator_1[1]
+            )
+                
+            if attack_rect.colliderect(target.rect):
+                self.ult_points += 1
+                target.health -= self.dano1 - target.defesa
+                target.hit = True
+                self.count_knock_back = self.knock_back / 2
+
+
+        elif self.attack_type == 2:
+            if not self.flip:
+                attack_rect = pygame.Rect(
+                    self.rect.right,
+                    self.rect.y + ((self.attack_hitbox_modificator_2[1] * self.rect.height) - self.rect.height),
+                    self.rect.width * self.attack_hitbox_modificator_2[0],
+                    self.rect.height * self.attack_hitbox_modificator_2[1]
+                )
+                #pygame.draw.rect(self.screen, 'green', attack_rect)  
+            else:
+                attack_rect = pygame.Rect(
+                    self.rect.left - self.rect.width * self.attack_hitbox_modificator_2[0],
+                    self.rect.y + ((self.attack_hitbox_modificator_2[1] * self.rect.height) - self.rect.height),
+                    self.rect.width * self.attack_hitbox_modificator_2[0],
+                    self.rect.height * self.attack_hitbox_modificator_2[1]
+            )
+                #pygame.draw.rect(self.screen, 'green', attack_rect)  
+            if attack_rect.colliderect(target.rect):
+                self.ult_points += 2
+                target.health -= self.dano2 - target.defesa
+                target.hit = True
+                self.count_knock_back = self.knock_back
+
 
     def animar(self):
           # realiza animações
         animation_cooldown = 80
         self.image = self.animation_list[self.action][self.frame_index]
         #check  time since last update
-        if pygame.time.get_ticks() - self.update_time > animation_cooldown and self.attcking == False:
+        if pygame.time.get_ticks() - self.update_time > animation_cooldown and self.attcking == False and self.ulting == False:
             self.frame_index += 1
             self.update_time = pygame.time.get_ticks()
+        elif self.ulting:
+            if pygame.time.get_ticks() - self.update_time > self.ult_animation_cooldown:
+                self.frame_index += 1
+                self.update_time = pygame.time.get_ticks()
+                if self.frame_index == self.frame_ult:
+                    self.execute_ult(self.target)
+                    if self.frame_index >= len(self.animation_list[self.action]):
+                        self.ulting = False
         elif self.attack_type == 1:
             if self.attcking and pygame.time.get_ticks() - self.update_time > self.attack_animation_cooldown_1:
                 self.frame_index += 1
@@ -123,16 +124,20 @@ class Fighter():
                     self.attack_coldown = self.max_att_coldown_2
                 if self.action == 5:
                     self.hit = False
-                    
-                    
+                if self.action == 7:
+                    self.ulting = False
 
-    # animation updates
+
     def update(self):
         if self.hit:
             self.attcking = False
             self.attack_type = 0
             self.attack_coldown = 5
 
+        # if not self.enemie_knockback_geted:
+        #     self.get_nock(self.target)
+        #     self.enemie_knockback_geted = True
+        
 
         #check player action
         if self.health <= 0:
@@ -151,21 +156,16 @@ class Fighter():
             self.update_action(2)
         elif self.running:
             self.update_action(1)
+        elif self.ulting:
+            self.update_action(7)
         else:
             self.update_action(0)
         
-      
+        shot_group.draw(self.screen)
+        shot_group.update()
+        
         self.animar() 
 
-
-    def get_knock_back(self, target):
-        if not self.flip:
-            target.rect.x += 50 - self.target.knock_resistence
-        else: 
-            target.rect.x -= 50 - self.target.knock_resistence
-                
-
-    # movimento do personagem
 
     def move(self, screen_width, screen_height, target):
         if not self.get_target:
@@ -204,7 +204,7 @@ class Fighter():
 
 
 
-        if self.attcking == False and self.alive:
+        if self.attcking == False and self.alive and not self.ulting:
             #check player 1 controls
              # movimento
             if self.player == 1:
@@ -328,111 +328,90 @@ class Fighter():
             self.rect.y += dy
 
 
-    def execute_attack(self, target):
-        self.attack_sound.play()
-        if self.attack_type == 1:
-            if not self.flip:
-                attack_rect = pygame.Rect(
-                    self.rect.right,
-                    self.rect.y - ((self.attack_hitbox_modificator_1[1] * self.rect.height) - self.rect.height),
-                    self.rect.width * self.attack_hitbox_modificator_1[0],
-                    self.rect.height * self.attack_hitbox_modificator_1[1]
-                )
-                print("MOD 1:", self.attack_hitbox_modificator_1[1])
-                print("OFFSET:", (self.attack_hitbox_modificator_1[1] * self.rect.height) - self.rect.height)
-                #pygame.draw.rect(self.screen, 'green', attack_rect)
-            else:
-                attack_rect = pygame.Rect(
-                    self.rect.left - self.rect.width * self.attack_hitbox_modificator_1[0],
-                    self.rect.y - ((self.attack_hitbox_modificator_1[1] * self.rect.height) - self.rect.height),
-                    self.rect.width * self.attack_hitbox_modificator_1[0],
-                    self.rect.height * self.attack_hitbox_modificator_1[1]
-            )
-                #pygame.draw.rect(self.screen, 'green', attack_rect)   
-            if attack_rect.colliderect(target.rect):
-                self.ult_points += 1
-                target.health -= self.dano1 - target.defesa
-                target.hit = True
-
-
-        elif self.attack_type == 2:
-            if not self.flip:
-                attack_rect = pygame.Rect(
-                    self.rect.right,
-                    self.rect.y + ((self.attack_hitbox_modificator_2[1] * self.rect.height) - self.rect.height),
-                    self.rect.width * self.attack_hitbox_modificator_2[0],
-                    self.rect.height * self.attack_hitbox_modificator_2[1]
-                )
-                #pygame.draw.rect(self.screen, 'green', attack_rect)  
-            else:
-                attack_rect = pygame.Rect(
-                    self.rect.left - self.rect.width * self.attack_hitbox_modificator_2[0],
-                    self.rect.y + ((self.attack_hitbox_modificator_2[1] * self.rect.height) - self.rect.height),
-                    self.rect.width * self.attack_hitbox_modificator_2[0],
-                    self.rect.height * self.attack_hitbox_modificator_2[1]
-            )
-                #pygame.draw.rect(self.screen, 'green', attack_rect)  
-            if attack_rect.colliderect(target.rect):
-                self.ult_points += 1
-                target.health -= self.dano2 - target.defesa
-                target.hit = True
-
-
-    # desenha hitbox para debug
-        #pygame.draw.rect(self.screen, 'green', attack_rect)
-
-        
-
-    def attack1(self):
-        if self.attack_coldown == 0:
-            # execute attack
-            self.attcking = True
-            self.attack_type = 1
 
 
     def attack2(self):
         if self.attack_coldown == 0:
-            # execute attack
             self.attcking = True
             self.attack_type = 2
-            
-            
-    
+            self.dashx = 1 if not self.flip else -1
 
     def hab1(self):
-        if not self.repressed:
-            print('habilidade 1')
+        if self.ult_points > 0:
+            self.ult_points -= 1
+            shot = ShotRobo(shot_surf, self.rect.centerx, self.rect.centery, self.target, self.screen_width, 30, [5, 2, self.target.flip],  shot_group)
 
     def hab2(self):
-        if not self.repressed:
-            print('habilidade 2')
+        if self.ult_points > 2 and not self.jump:
+            self.ult_points -= 3
+            if self.flip:
+                spaw = 1334
+            else:
+                spaw = -34
+            bigshot = ShotRobo(big_projetil, spaw, self.rect.bottom, self.target, self.screen_width, 5,[20, 6, self.target.flip],  shot_group)
 
+    
     def ult(self):
-        if not self.repressed:
-            print('ult')
-
-    def update_action(self, new_action):
-        # check if new action is diferrent
-        if new_action != self.action:
-            self.action = new_action
-            # update animation
-            self.frame_index = 0
-            self.update_time = pygame.time.get_ticks()
+        if self.ult_points >= self.ult_min:
+            self.ult_points -= self.ult_min
+            self.ulting = True
+    def execute_ult(self, target):
+        missil_shot = MissilRobo(missil, random.randint(700, 1300), -100, target, self.screen, 18, 55, shot_group)
+        missil_shot = MissilRobo(missil, random.randint(100, 600), -100, target, self.screen, 18, 55, shot_group)
 
 
-    def draw(self):
-        img = pygame.transform.flip(self.image, self.flip, False)
-        bottom_height = 5
-        bottom_rect = pygame.Rect(
-            self.rect.x,
-            self.rect.bottom + bottom_height,
-            self.rect.width - 10,
-            bottom_height
-        )
-        if self.player == 1:
-            pygame.draw.rect(self.screen, 'blue', bottom_rect)
-            #pygame.draw.rect(self.screen, 'red', self.rect) # desenha hitbox para debug
-        else:
-            pygame.draw.rect(self.screen, 'red', bottom_rect)
-        self.screen.blit(img, (self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1]* self.image_scale)))
+class ShotRobo(pygame.sprite.Sprite):
+    def __init__(self,surf,x,y,target, screen_width,speed, status, groups):
+        super().__init__(groups)
+        self.screen = screen_width
+        self.image = surf
+        self.rect = self.image.get_rect(bottomleft = (x,y))
+        self.speed = speed
+        self.target = target
+        self.dano = status[0]
+        self.knock_back = status[1]
+        self.direction = status[2]
+
+    def update(self):
         
+        self.check_colision()
+        if self.direction:
+            self.rect.centerx += self.speed
+        else:
+            self.rect.centerx -= self.speed
+        if self.rect.left > (self.screen + 66) or self.rect.right < -66:
+            self.kill()
+
+    def check_colision(self):
+        if self.rect.colliderect(self.target.rect):
+            self.target.health -= (self.dano -self.target.defesa)
+            self.target.hit = True
+            self.target.target.count_knock_back = self.knock_back
+            self.kill()
+
+class MissilRobo(pygame.sprite.Sprite):
+    def __init__(self,surf,x,y,target, screen_width,speed, dano, groups):
+        super().__init__(groups)
+        self.screen = screen_width
+        self.image = surf
+        self.rect = self.image.get_rect(bottomleft = (x,y))
+        self.speed = speed
+        self.target = target
+        self.dano = dano
+        
+
+    def update(self):
+        self.check_colision()
+        self.rect.centery += self.speed
+        if self.rect.top > self.screen.height:
+            self.kill()
+
+    def check_colision(self):
+        if self.rect.colliderect(self.target.rect):
+            self.target.health -= (self.dano - self.target.defesa)
+            self.target.hit = True
+            self.kill()
+
+
+
+

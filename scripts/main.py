@@ -1,9 +1,11 @@
 import pygame
 from pygame import mixer
-from fighter import Fighter
-from mago import Mago
-from guerreiro import Guerreiro
+import utils
+from cenas import Menu, Selecao, Batalha
+import os
+import random
 
+os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.init()
 mixer.init()
 
@@ -27,86 +29,29 @@ round_over = False
 round_over_cooldown = 2000
 
 
-# define fighter variables
-PLAYER1_SIZE = 162
-PLAYER1_SCALE = 6.5
-PLAYER1_OFFSET = [72, 56]
-PLAYER1_DATA = [PLAYER1_SIZE, PLAYER1_SCALE, PLAYER1_OFFSET]
-PLAYER2_SIZE = 250
-PLAYER2_SCALE = 3.8
-PLAYER2_OFFSET = [116, 114]
-PLAYER2_DATA = [PLAYER2_SIZE, PLAYER2_SCALE, PLAYER2_OFFSET]
-PLAYER1_INICIAL_POSITION = [200, 270]
-PLAYER2_INICIAL_POSITION = [700, 360]
-
-# defininado informação dos personagens
-caracters_status = [
-    {
-     'nome': 'Guerreiro',
-     'dano1' : 10,
-     'dano2' : 18,
-     'defesa': 3,
-     'speed': 8,
-     'jump_high': 30,
-     'largura': 120,
-     'altura': 290,
-     'posicao_inicial': [200, 270],
-     'attack_animation_cooldown_1' : 60,
-     'attack_animation_cooldown_2' : 100,
-     'attack_box_size_1': [2.2,1.1],
-     'attack_box_size_2': [2,1.09],
-     'ult_min': 3,
-     'attack_coldwon1': 10,
-     'attack_coldwon2': 55,
-     'knock_back': 3
-
-    },
-     {
-     'nome': 'Mago',
-     'dano1' : 6,
-     'dano2' : 12,
-     'defesa': 1,
-     'speed': 12,
-     'jump_high': 30,
-     'largura': 100,
-     'altura': 200 ,
-     'posicao_inicial': [700, 360],
-     'attack_animation_cooldown_1' : 50,
-     'attack_animation_cooldown_2' : 80,
-     'attack_box_size_1': [3.8, 2],
-     'attack_box_size_2': [3.5, 2],
-     'dash_coldown': 600,
-     'ult_min': 6,
-     'attack_coldwon1': 10,
-     'attack_coldwon2': 45,
-     'knock_back': 1
-     }
-]
-
 
 # uploads
-bg_image = pygame.image.load('./assets/images/background/background.jpg').convert_alpha()
-player1_sheet = pygame.image.load('./assets/images/warrior/Sprites/warrior.png').convert_alpha()
-player2_sheet = pygame.image.load('./assets/images/wizard/Sprites/wizard.png').convert_alpha()
+bg_image2 = pygame.image.load('./assets/images/background/background.jpg').convert_alpha()
+bg_image3 = pygame.image.load('./assets/images/background/lago.gif').convert_alpha()
+bg_image4 = pygame.image.load('./assets/images/background/tree.gif').convert_alpha()
+bg_image5 = pygame.image.load('./assets/images/background/hell.gif').convert_alpha()
+bg_image6 = pygame.image.load('./assets/images/background/ship.gif').convert_alpha()
+bg_image7 = pygame.image.load('./assets/images/background/house.gif').convert_alpha()
+bg_image = pygame.image.load('./assets/images/background/voluntarios_fauna.png').convert_alpha()
+cenarios = [bg_image2, bg_image3, bg_image4, bg_image5, bg_image6, bg_image7]
 fonte = pygame.font.Font('./assets/fonts/turok.ttf', 80) 
 scorefonte = pygame.font.Font('./assets/fonts/turok.ttf', 30) 
 # musica e sons
 mixer.music.load('./assets/audio/music.mp3')
 mixer.music.set_volume(0.2)
 mixer.music.play(-1, 0.0, 5000)
-sword_fx = mixer.Sound('./assets/audio/sword.wav')
-sword_fx.set_volume(0.3)
-staff_fx = mixer.Sound('./assets/audio/magic.wav')
-sword_fx.set_volume(0.3)
 
-# define number of steps in animations
-WARRIOR_ANIMATION_STEPS = [10,8,1,7,7,3,7]
-WIZARD_ANIMATION_STEPS = [8,8,1,8,8,3,7]
+
 
 
 
 # function for draw backgorund
-def draw_bg():
+def draw_bg(bg_image):
     scaled_bg = pygame.transform.scale(bg_image, (SCREEN_WIDTH,SCREEN_HEIGHT))
     screen.blit(scaled_bg, (0,0))
 # function for draw health bar
@@ -125,84 +70,197 @@ def draw_text(text, font, text_col, x, y):
 #guerreiro = Fighter(2, False,PLAYER2_INICIAL_POSITION, PLAYER1_DATA, player1_sheet, WARRIOR_ANIMATION_STEPS, sword_fx, caracters_status[0])
 
 # create players instances
-esc1 = int(input('player 1: 1- guerriero, 2 - mago '))
-esc2 = int(input('player 1: 1- guerriero, 2 - mago '))
-if esc1 == 1:
-    fighter_1 = Guerreiro(1, False,PLAYER1_INICIAL_POSITION, PLAYER1_DATA, player1_sheet, WARRIOR_ANIMATION_STEPS, sword_fx, caracters_status[0], screen)
-else:
-    fighter_1 = Mago(1, False,PLAYER1_INICIAL_POSITION, PLAYER2_DATA, player2_sheet, WIZARD_ANIMATION_STEPS, staff_fx, caracters_status[1], screen)
-if esc2 == 1:
-    fighter_2 = Guerreiro(2, True,PLAYER2_INICIAL_POSITION, PLAYER1_DATA, player1_sheet, WARRIOR_ANIMATION_STEPS, sword_fx, caracters_status[0], screen)
-else:
-    fighter_2 = Mago(2, True,PLAYER2_INICIAL_POSITION, PLAYER2_DATA, player2_sheet, WIZARD_ANIMATION_STEPS, staff_fx, caracters_status[1], screen)
+# esc1 = int(input('player 1: 1- guerriero, 2 - mago '))
+# esc2 = int(input('player 1: 1- guerriero, 2 - mago, 0 - playerbot'))
+# if esc1 == 1:
+#     fighter_1 = Guerreiro(1, False,PLAYER1_INICIAL_POSITION, PLAYER1_DATA, player1_sheet, WARRIOR_ANIMATION_STEPS, sword_fx, caracters_status[0], screen)
+# elif esc1 == 2:
+#     fighter_1 = Mago(1, False,PLAYER1_INICIAL_POSITION, PLAYER2_DATA, player2_sheet, WIZARD_ANIMATION_STEPS, staff_fx, caracters_status[1], screen)
+# elif esc1 == 3:
+#     fighter_1 = Cavaleiro(1, False, PLAYER1_INICIAL_POSITION, PLAYER3_DATA, player3_sheet, KNIGHT_ANIMATION_STEPS, sword_fx, caracters_status[2], screen)
+# elif esc1 == 4:
+#     fighter_1 = 
+# elif esc1 == 5:
+#     fighter_1 = 
+#     fighter_1 = Deusa(1, False,PLAYER1_INICIAL_POSITION, PLAYER6_DATA, player6_sheet, GODDESS_ANIMATION_STEPS, staff_fx, caracters_status[5], screen)
+# if esc2 == 1:
+#     fighter_2 = Guerreiro(2, True,PLAYER2_INICIAL_POSITION, PLAYER1_DATA, player1_sheet, WARRIOR_ANIMATION_STEPS, sword_fx, caracters_status[0], screen)
+# elif esc2 == 2:
+#     fighter_2 = Mago(2, True,PLAYER2_INICIAL_POSITION, PLAYER2_DATA, player2_sheet, WIZARD_ANIMATION_STEPS, staff_fx, caracters_status[1], screen)
+# elif esc2 == 3:
+#     fighter_2 = Cavaleiro(2, True, PLAYER2_INICIAL_POSITION, PLAYER3_DATA, player3_sheet, KNIGHT_ANIMATION_STEPS, sword_fx, caracters_status[2], screen)
+# elif esc2 == 4:
+#     fighter_2 = Robo(2, True, PLAYER2_INICIAL_POSITION, PLAYER4_DATA, player4_sheet, ROBOT_ANIMATION_STEPS, staff_fx, caracters_status[3], screen)
+# elif esc2 == 5:
+#     fighter_2 = Paladino(2, True, PLAYER2_INICIAL_POSITION, PLAYER5_DATA, player5_sheet, PALADINE_ANIMATION_STEPS, staff_fx, caracters_status[4], screen)
+# elif esc2 == 6:
+#     fighter_2 = Deusa(2, True,PLAYER2_INICIAL_POSITION, PLAYER6_DATA, player6_sheet, GODDESS_ANIMATION_STEPS, staff_fx, caracters_status[5], screen)
+# else:
+#     #fighter_2 = Bot_mago(2, True,PLAYER2_INICIAL_POSITION, PLAYER2_DATA, player2_sheet, WIZARD_ANIMATION_STEPS, staff_fx, caracters_status[1], screen)
+# # fighter_1 = Bot_player(1, False,PLAYER1_INICIAL_POSITION, PLAYER3_DATA, player3_sheet, KNIGHT_ANIMATION_STEPS, sword_fx, caracters_status[2], screen)
+#     fighter_2 = Bot_guerreiro(2, True,PLAYER2_INICIAL_POSITION, PLAYER1_DATA, player1_sheet, WARRIOR_ANIMATION_STEPS, sword_fx, caracters_status[0], screen)
 
 
+# utils.fighter_1 = fighter_1
+# utils.fighter_2 = fighter_2
 
+scenes = {
+    'menu': Menu(screen),
+    # Passamos o estado correto para a classe Selecao saber qual jogador ela representa:
+    'selecaov1': Selecao(screen, 'selecaov1'), 
+    'selecaov2': Selecao(screen, 'selecaov2'),
+    'selecaod': Selecao(screen, 'selecaod'),
+    'batalha': Batalha(screen)
+}
+
+cenaAtual = 'menu'
+cenaAnterior = None # Variável para rastrear a cena no frame anterior
 
 # Game Loop
 run = True
 while run:
     clock.tick(fps)
-
-    #draw background
-    draw_bg()
-
-    # show player status
-    draw_health_bar(fighter_1.health, fighter_1.inicial_position[0]-160, 20)
-    draw_health_bar(fighter_2.health, fighter_2.inicial_position[0]-160, 20)
-    draw_text('P1: '+ str(fighter_1.ult_points), scorefonte, 'red', fighter_1.inicial_position[0]-160,60)
-    draw_text('P2: '+ str(fighter_2.ult_points), scorefonte, 'red', fighter_2.inicial_position[0]-160,60)
     
-
-    if intro_count <= 0 and round_over == False:
-    # move fighters
-        fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, fighter_2)
-        fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, fighter_1)
-    elif intro_count > 0 and round_over == False:
-        #update countdown
-        draw_text(str(intro_count),fonte, 'red', SCREEN_WIDTH/2, SCREEN_HEIGHT/8)
-        if pygame.time.get_ticks() - last_count_update > 1000:
-            intro_count -= 1
-            last_count_update = pygame.time.get_ticks()
-
-   
-
-
     
+    # -----------------------------------------------
+    if cenaAtual != cenaAnterior:
+        
+        # Se a transição foi para o menu, reseta os estados internos das Seleções
+        if cenaAtual == 'menu' and cenaAnterior in ['selecaov1', 'selecaov2', 'selecaod']:
+            utils.desafio_level = 0
+            
+            # SOLUÇÃO CHAVE: RESETA O ESTADO INTERNO DA CLASSE Selecao
+            # para que ela retorne o próprio nome na próxima vez que for chamada.
+            scenes['selecaov1'].estado = 'selecaov1'
+            scenes['selecaov2'].estado = 'selecaov2'
+            scenes['selecaod'].estado = 'selecaod'
+    # draw background
+    draw_bg(bg_image)
 
-    # draw fighters
-    fighter_1.draw()
-    fighter_2.draw()
+    # -----------------------------------------------
+    # 2. ATUALIZAÇÃO DA CENA ATIVA
+    # Chama o método atualizar da cena ativa e pega o próximo estado
+    cenaAtual = scenes[cenaAtual].atualizar() 
+    # -----------------------------------------------
 
-    # update figthers
-    fighter_1.update()
-    fighter_2.update()
+    # Se a cena ativa for a Batalha, desenha e move os lutadores
+    if cenaAtual == 'batalha':
+        if utils.desafio_level == 0:
+            draw_bg(cenarios[utils.vs_background])
+        else:
+            draw_bg(cenarios[utils.desafio_level-1])
+        # Seus comandos de jogo da Batalha (movimento, desenho e HUD)
+
+        if utils.intro_count <= 0:
+            utils.fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, utils.fighter_2)
+            if utils.fighter_2.alive:
+                utils.fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, utils.fighter_1)
+        else:
+            draw_text(str(utils.intro_count),fonte, 'red', SCREEN_WIDTH/2, SCREEN_HEIGHT/8)
+            if pygame.time.get_ticks() - utils.last_count_update > 1000:
+                utils.intro_count -= 1
+                utils.last_count_update = pygame.time.get_ticks()
+        if utils.fighter_1.num_vitorias > 1 or utils.fighter_2.num_vitorias > 1:
+            scenes['batalha'].over = False
+            scenes['batalha'].batalha_done = False
+            utils.fighter_1.alive = True
+            utils.fighter_1.health = 100
+            utils.fighter_1.ult_points = 0
+            utils.fighter_2.alive = True
+            utils.fighter_2.helath = 100
+            utils.fighter_2.ult_points = 0
+
+
+        utils.fighter_1.draw()
+        utils.fighter_2.draw()
+        utils.fighter_1.update()
+        utils.fighter_2.update()
+        
+        # Desenho da HUD na Batalha
+        draw_health_bar(utils.fighter_1.health, 40, 20)
+        draw_health_bar(utils.fighter_2.health, 980, 20)
+        draw_text('P1: '+ str(utils.fighter_1.ult_points), scorefonte, 'blue', 200-160,60)
+        draw_text(str(utils.fighter_1.num_vitorias), scorefonte, 'blue', 680,20)
+        draw_text(str(utils.fighter_2.num_vitorias), scorefonte, 'red', 715,20)
+        draw_text('-', scorefonte, 'white', 700,18)
+        draw_text('P2: '+ str(utils.fighter_2.ult_points), scorefonte, 'red', 1200-220,60)
+        
+        if utils.existis_goddess:
+            utils.existis_goddess.update()
+            pass
+        # Lógica de vitória/derrota da Batalha deve ser movida para cá ou para o Batalha.update()
+        # Mas por enquanto, vamos focar no reset:
+        if scenes[cenaAtual].over:
+            scenes[cenaAtual].desenhar_texto()
+            if scenes[cenaAtual].batalha_done:
+                scenes[cenaAtual].resetar_batalha()
+
+    if cenaAtual == 'selecaod' and utils.fighter_1 and utils.fighter_2:
+        scenes['batalha'].over = False
+        scenes['batalha'].batalha_done = False
+        scenes['batalha'].estado = 'batalha'
+        scenes['selecaod'].estado = 'selecaod'
+        utils.fighter_1.alive = True
+        utils.fighter_1.health = 100
+        utils.fighter_1.ult_points = 0
+        utils.fighter_1.num_vitorias = 0
+        utils.fighter_2.alive = True
+        utils.fighter_2.helath = 100
+        utils.fighter_2.ult_points = 0
+        utils.fighter_2.num_vitorias = 0
+        for inimigo in utils.inimigos:
+            if None not in utils.inimigos:
+                inimigo.ult_points = 0
+                inimigo.health = 100
+                inimigo.alive = True
+                inimigo.num_vitorias = 0
+    if cenaAtual == 'selecaov2' and utils.fighter_1 and utils.fighter_2:
+        scenes['batalha'].over = False
+        scenes['batalha'].batalha_done = False
+        scenes['batalha'].estado = 'batalha'
+        scenes['selecaod'].estado = 'selecaod'
+        utils.fighter_1.alive = True
+        utils.fighter_1.health = 100
+        utils.fighter_1.ult_points = 0
+        utils.fighter_1.num_vitorias = 0
+        utils.fighter_2.alive = True
+        utils.fighter_2.helath = 100
+        utils.fighter_2.ult_points = 0
+        utils.fighter_2.num_vitorias = 0
+        utils.desafio_level = 0
+        for inimigo in utils.inimigos:
+            if None not in utils.inimigos:
+                inimigo.ult_points = 0
+                inimigo.health = 100
+                inimigo.alive = True
+                inimigo.num_vitorias = 0
+    if cenaAtual != cenaAnterior:
+            
+            # Ao SAIR da seleção e IR para o menu, você deve garantir que o estado interno
+            # das instâncias 'selecaov1', 'selecaov2' e 'selecaod' volte ao seu valor padrão.
+            
+            if cenaAtual == 'menu' and cenaAnterior in ['selecaov1', 'selecaov2', 'selecaod']:
+                # Reseta o nível do desafio ao voltar ao menu
+                utils.desafio_level = 0
+                
+                # Garante que a cena de seleção não tente mais retornar 'menu' na próxima vez que for chamada
+                # (Se você estivesse usando a instância Selecao em vez de recriá-la, precisaria disso)
+                # scenes['selecaov1'].estado = 'selecaov1'
+                # scenes['selecaov2'].estado = 'selecaov2'
+                # scenes['selecaod'].estado = 'selecaod'
+
+    cenaAnterior = cenaAtual # Atuali
+
+
 
     # event hendler
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
 
+    if utils.sair:
+        run = False
 
-    # check for victory
-    if round_over == False:
-        if fighter_1.alive == False:
-            score[1] += 1
-            round_over = True
-            round_over_time = pygame.time.get_ticks()
-        elif fighter_2.alive == False:
-            score[0] += 1
-            round_over = True
-            round_over_time = pygame.time.get_ticks()
-    else:
-        draw_text('Victory',fonte, 'red', SCREEN_WIDTH/2.5, SCREEN_HEIGHT/8)
-        if pygame.time.get_ticks() - round_over_time > round_over_cooldown:
-            round_over = False
-            #fighter_1 = Fighter(1, 200, 360,False, PLAYER1_DATA, player1_sheet, WARRIOR_ANIMATION_STEPS, 10, sword_fx)
-            #fighter_2 = Fighter(2, 700, 360,True, PLAYER2_DATA, player2_sheet, WIZARD_ANIMATION_STEPS, 30, staff_fx)
-            intro_count = 3
-
-    
     # update display
     pygame.display.update()
 

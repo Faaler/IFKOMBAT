@@ -11,6 +11,10 @@ class Guerreiro(Fighter):
         self.ima_limite = 0
         self.oldspeed = 0
         self.has_ima = False
+        self.ult_active = False
+        self.acid_active = False
+        self.last_ima = 0
+        self.pos_atract = 0
 
 
     def execute_attack(self, target):
@@ -32,6 +36,7 @@ class Guerreiro(Fighter):
             )
             if attack_rect.colliderect(target.rect):
                 self.ult_points += 1
+                self.has_ima = False
                 target.health -= self.dano1 - target.defesa
                 self.count_knock_back = self.knock_back
                 target.hit = True
@@ -54,9 +59,12 @@ class Guerreiro(Fighter):
             )
             if attack_rect.colliderect(target.rect):
                 self.ult_points += 1
+                self.has_ima = False
                 target.health -= self.dano2 - target.defesa
                 self.count_knock_back = self.knock_back * 3
+                target.jump = True
                 target.hit = True
+                print(self.rect.y)
 
     def update(self):
         if self.hit:
@@ -84,7 +92,7 @@ class Guerreiro(Fighter):
             self.update_action(1)
         else:
             self.update_action(0)
-        
+
       
         self.animar()
         acid_group.update()
@@ -92,45 +100,49 @@ class Guerreiro(Fighter):
 
     def hab1(self):
         lastcall = pygame.time.get_ticks()
+        self.acid_active = True
         self.oldspeed = self.target.speed
         if self.player == 1:
             color = 'yellow'
         else:
             color = 'green'
-        if not self.acid_exist and not self.jump:
+        if not self.acid_exist and not self.jump and not self.ult_active:
             if self.flip:
-                Acid(self.rect.bottom -2, self.rect.left - 180,20,color, lastcall, self.screen, self.target,self.oldspeed, acid_group)
+                Acid(self.rect.bottom -2, self.rect.left - 180,20,color, lastcall, self.screen, self.target,self.oldspeed,2,150,10, acid_group)
             else:
-                Acid(self.rect.bottom - 2, self.rect.left + 180,20,color, lastcall, self.screen, self.target,self.oldspeed, acid_group)
+                Acid(self.rect.bottom - 2, self.rect.left + 180,20,color, lastcall, self.screen, self.target,self.oldspeed,2,150,10, acid_group)
 
     def hab2(self):
-        if self.player == 1:
-            if not self.flip:
-                self.case = 1
-                self.ima_limite = ((self.target.rect.x - self.rect.x)*0.4)
-                if not self.has_ima:
-                    self.oldspeed = self.target.speed
-            else:
-                self.case = 2
-                self.ima_limite = ((self.rect.x - self.target.rect.x)*0.4)
-                if not self.has_ima:
-                    self.oldspeed = self.target.speed
-        elif self.player == 2:
-            if self.flip:
-                self.case = 2
-                self.ima_limite = ((self.rect.x - self.target.rect.x)*0.4)
-                if not self.has_ima:
-                    self.oldspeed = self.target.speed
-            else:
-                self.case = 1
-                self.ima_limite = ((self.target.rect.x - self.rect.x)*0.4)
-                if not self.has_ima:
-                    self.oldspeed = self.target.speed
+        if pygame.time.get_ticks() - self.last_ima > 4000 and not self.jump:
+            self.last_ima = pygame.time.get_ticks()
+            self.pos_atract = self.rect.x
+            if self.player == 1:
+                if not self.flip:
+                    self.case = 1
+                    self.ima_limite = ((self.target.rect.x - self.rect.x)*0.4)
+                    if not self.has_ima:
+                        self.oldspeed = self.target.speed
+                else:
+                    self.case = 2
+                    self.ima_limite = ((self.rect.x - self.target.rect.x)*0.4)
+                    if not self.has_ima:
+                        self.oldspeed = self.target.speed
+            elif self.player == 2:
+                if self.flip:
+                    self.case = 2
+                    self.ima_limite = ((self.rect.x - self.target.rect.x)*0.4)
+                    if not self.has_ima:
+                        self.oldspeed = self.target.speed
+                else:
+                    self.case = 1
+                    self.ima_limite = ((self.target.rect.x - self.rect.x)*0.4)
+                    if not self.has_ima:
+                        self.oldspeed = self.target.speed
 
                 
     def att_hab2(self):
         if self.case == 1:
-            if self.target.rect.x - self.rect.x > self.ima_limite:
+            if self.target.rect.x - self.pos_atract > self.ima_limite:
                 self.has_ima = True
                 self.target.stoped = True
                 self.target.rect.x -= 10
@@ -139,7 +151,7 @@ class Guerreiro(Fighter):
                 self.case = 0
                 self.has_ima = False
         if self.case == 2:
-            if self.rect.x - self.target.rect.x > self.ima_limite:
+            if self.pos_atract - self.target.rect.x > self.ima_limite:
                 self.has_ima = True
                 self.target.stoped = True
                 self.target.rect.x += 10
@@ -149,12 +161,25 @@ class Guerreiro(Fighter):
                 self.has_ima = False
 
         
-
+    def ult(self):
+        self.ult_active = True
+        lastcall = pygame.time.get_ticks()
+        self.oldspeed = self.target.speed
+        if self.player == 1:
+            color = '#B8860B'
+        else:
+            color = '#013220'
+        if not self.jump and not self.acid_active:
+            self.ult_points -= self.ult_min
+            if self.flip:
+                Acid(self.rect.bottom -2, self.rect.left - 180 - 600,90,color, lastcall, self.screen, self.target,self.oldspeed,1,600,15, acid_group)
+            else:
+                Acid(self.rect.bottom - 2, self.rect.left + 180,90,color, lastcall, self.screen, self.target,self.oldspeed,1,600,15, acid_group)
 
 class Acid(pygame.sprite.Sprite):
-    def __init__(self,y, x, life, color, criacao, screen,target,oldspeed, groups):
+    def __init__(self,y, x, life, color, criacao, screen,target,oldspeed,dano, largura,tempo_vida, groups):
         super().__init__(groups)
-        self.rect = pygame.Rect((x, y, 150, 6))
+        self.rect = pygame.Rect((x, y, largura, 6))
         self.life = life
         self.screen = screen
         self.target = target
@@ -165,13 +190,17 @@ class Acid(pygame.sprite.Sprite):
         self.criacao = criacao
         self.oldspeed = oldspeed
         self.newspeed = oldspeed / 2
+        self.dano = dano
+        self.tempo_de_vida = tempo_vida * 1000
 
     def update(self):
         pygame.draw.rect(self.screen, self.color, self.rect)
         self.check_colision()
-        if self.life <= 0 or pygame.time.get_ticks() - self.criacao > 10000:
+        if self.life <= 0 or pygame.time.get_ticks() - self.criacao > self.tempo_de_vida or not self.target.alive or not self.target.target.alive:
             self.target.target.acid_exist = False
             self.target.speed = self.oldspeed
+            self.target.target.ult_active = False
+            self.target.target.acid_active = False
             self.kill()
         
 
@@ -179,7 +208,7 @@ class Acid(pygame.sprite.Sprite):
         
         if self.rect.colliderect(self.target.rect):
             if pygame.time.get_ticks() - self.last_damage > self.damage_cooldown:
-                self.target.health -= 2
+                self.target.health -= self.dano
                 self.life -= 2
                 self.target.speed = self.newspeed
                 self.last_damage = pygame.time.get_ticks()
