@@ -66,47 +66,9 @@ def draw_text(text, font, text_col, x, y):
     img = font.render(text, True, text_col)
     screen.blit(img, (x,y))
 
-#mago = Mago(1, True,PLAYER1_INICIAL_POSITION, PLAYER2_DATA, player2_sheet, WIZARD_ANIMATION_STEPS, staff_fx, caracters_status[1])
-#guerreiro = Fighter(2, False,PLAYER2_INICIAL_POSITION, PLAYER1_DATA, player1_sheet, WARRIOR_ANIMATION_STEPS, sword_fx, caracters_status[0])
-
-# create players instances
-# esc1 = int(input('player 1: 1- guerriero, 2 - mago '))
-# esc2 = int(input('player 1: 1- guerriero, 2 - mago, 0 - playerbot'))
-# if esc1 == 1:
-#     fighter_1 = Guerreiro(1, False,PLAYER1_INICIAL_POSITION, PLAYER1_DATA, player1_sheet, WARRIOR_ANIMATION_STEPS, sword_fx, caracters_status[0], screen)
-# elif esc1 == 2:
-#     fighter_1 = Mago(1, False,PLAYER1_INICIAL_POSITION, PLAYER2_DATA, player2_sheet, WIZARD_ANIMATION_STEPS, staff_fx, caracters_status[1], screen)
-# elif esc1 == 3:
-#     fighter_1 = Cavaleiro(1, False, PLAYER1_INICIAL_POSITION, PLAYER3_DATA, player3_sheet, KNIGHT_ANIMATION_STEPS, sword_fx, caracters_status[2], screen)
-# elif esc1 == 4:
-#     fighter_1 = 
-# elif esc1 == 5:
-#     fighter_1 = 
-#     fighter_1 = Deusa(1, False,PLAYER1_INICIAL_POSITION, PLAYER6_DATA, player6_sheet, GODDESS_ANIMATION_STEPS, staff_fx, caracters_status[5], screen)
-# if esc2 == 1:
-#     fighter_2 = Guerreiro(2, True,PLAYER2_INICIAL_POSITION, PLAYER1_DATA, player1_sheet, WARRIOR_ANIMATION_STEPS, sword_fx, caracters_status[0], screen)
-# elif esc2 == 2:
-#     fighter_2 = Mago(2, True,PLAYER2_INICIAL_POSITION, PLAYER2_DATA, player2_sheet, WIZARD_ANIMATION_STEPS, staff_fx, caracters_status[1], screen)
-# elif esc2 == 3:
-#     fighter_2 = Cavaleiro(2, True, PLAYER2_INICIAL_POSITION, PLAYER3_DATA, player3_sheet, KNIGHT_ANIMATION_STEPS, sword_fx, caracters_status[2], screen)
-# elif esc2 == 4:
-#     fighter_2 = Robo(2, True, PLAYER2_INICIAL_POSITION, PLAYER4_DATA, player4_sheet, ROBOT_ANIMATION_STEPS, staff_fx, caracters_status[3], screen)
-# elif esc2 == 5:
-#     fighter_2 = Paladino(2, True, PLAYER2_INICIAL_POSITION, PLAYER5_DATA, player5_sheet, PALADINE_ANIMATION_STEPS, staff_fx, caracters_status[4], screen)
-# elif esc2 == 6:
-#     fighter_2 = Deusa(2, True,PLAYER2_INICIAL_POSITION, PLAYER6_DATA, player6_sheet, GODDESS_ANIMATION_STEPS, staff_fx, caracters_status[5], screen)
-# else:
-#     #fighter_2 = Bot_mago(2, True,PLAYER2_INICIAL_POSITION, PLAYER2_DATA, player2_sheet, WIZARD_ANIMATION_STEPS, staff_fx, caracters_status[1], screen)
-# # fighter_1 = Bot_player(1, False,PLAYER1_INICIAL_POSITION, PLAYER3_DATA, player3_sheet, KNIGHT_ANIMATION_STEPS, sword_fx, caracters_status[2], screen)
-#     fighter_2 = Bot_guerreiro(2, True,PLAYER2_INICIAL_POSITION, PLAYER1_DATA, player1_sheet, WARRIOR_ANIMATION_STEPS, sword_fx, caracters_status[0], screen)
-
-
-# utils.fighter_1 = fighter_1
-# utils.fighter_2 = fighter_2
 
 scenes = {
     'menu': Menu(screen),
-    # Passamos o estado correto para a classe Selecao saber qual jogador ela representa:
     'selecaov1': Selecao(screen, 'selecaov1'), 
     'selecaov2': Selecao(screen, 'selecaov2'),
     'selecaod': Selecao(screen, 'selecaod'),
@@ -114,7 +76,7 @@ scenes = {
 }
 
 cenaAtual = 'menu'
-cenaAnterior = None # Variável para rastrear a cena no frame anterior
+cenaAnterior = None 
 
 # Game Loop
 run = True
@@ -125,23 +87,20 @@ while run:
     # -----------------------------------------------
     if cenaAtual != cenaAnterior:
         
-        # Se a transição foi para o menu, reseta os estados internos das Seleções
         if cenaAtual == 'menu' and cenaAnterior in ['selecaov1', 'selecaov2', 'selecaod']:
             utils.desafio_level = 0
             
-            # SOLUÇÃO CHAVE: RESETA O ESTADO INTERNO DA CLASSE Selecao
-            # para que ela retorne o próprio nome na próxima vez que for chamada.
+
             scenes['selecaov1'].estado = 'selecaov1'
             scenes['selecaov2'].estado = 'selecaov2'
             scenes['selecaod'].estado = 'selecaod'
     # draw background
     draw_bg(bg_image)
 
-    # -----------------------------------------------
-    # 2. ATUALIZAÇÃO DA CENA ATIVA
+
     # Chama o método atualizar da cena ativa e pega o próximo estado
     cenaAtual = scenes[cenaAtual].atualizar() 
-    # -----------------------------------------------
+   
 
     # Se a cena ativa for a Batalha, desenha e move os lutadores
     if cenaAtual == 'batalha':
@@ -149,7 +108,7 @@ while run:
             draw_bg(cenarios[utils.vs_background])
         else:
             draw_bg(cenarios[utils.desafio_level-1])
-        # Seus comandos de jogo da Batalha (movimento, desenho e HUD)
+
 
         if utils.intro_count <= 0:
             utils.fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, utils.fighter_2)
@@ -188,8 +147,7 @@ while run:
         if utils.existis_goddess:
             utils.existis_goddess.update()
             pass
-        # Lógica de vitória/derrota da Batalha deve ser movida para cá ou para o Batalha.update()
-        # Mas por enquanto, vamos focar no reset:
+
         if scenes[cenaAtual].over:
             scenes[cenaAtual].desenhar_texto()
             if scenes[cenaAtual].batalha_done:
@@ -236,18 +194,12 @@ while run:
                 inimigo.num_vitorias = 0
     if cenaAtual != cenaAnterior:
             
-            # Ao SAIR da seleção e IR para o menu, você deve garantir que o estado interno
-            # das instâncias 'selecaov1', 'selecaov2' e 'selecaod' volte ao seu valor padrão.
             
             if cenaAtual == 'menu' and cenaAnterior in ['selecaov1', 'selecaov2', 'selecaod']:
                 # Reseta o nível do desafio ao voltar ao menu
                 utils.desafio_level = 0
                 
-                # Garante que a cena de seleção não tente mais retornar 'menu' na próxima vez que for chamada
-                # (Se você estivesse usando a instância Selecao em vez de recriá-la, precisaria disso)
-                # scenes['selecaov1'].estado = 'selecaov1'
-                # scenes['selecaov2'].estado = 'selecaov2'
-                # scenes['selecaod'].estado = 'selecaod'
+  
 
     cenaAnterior = cenaAtual # Atuali
 

@@ -236,10 +236,10 @@ class Menu():
         if self.botao_desafio.get_click():
             utils.desafio_rota = 1
             utils.desafio_level = 1
-            proximo_estado = 'selecaod' # <--- Atualiza a variável local
+            proximo_estado = 'selecaod'
         
         if self.botao_versus.get_click():
-            proximo_estado = 'selecaov1' # <--- Atualiza a variável local
+            proximo_estado = 'selecaov1'
 
         if self.botao_sair.get_click():
             utils.sair = True        
