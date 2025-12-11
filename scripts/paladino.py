@@ -65,8 +65,8 @@ class Paladino(Fighter):
                 target.health -= self.dano2 - target.defesa
                 self.count_knock_back = self.knock_back
                 target.hit = True
-                self.last_hab1 -= 1000
-                self.last_repress -= 1000
+                self.last_hab1 -= 3000
+                self.last_repress -= 3000
 
 
     def update(self):

@@ -348,7 +348,7 @@ class Robo(Fighter):
                 spaw = 1334
             else:
                 spaw = -34
-            bigshot = ShotRobo(big_projetil, spaw, self.rect.bottom, self.target, self.screen_width, 2,[20, 6, self.target.flip],  shot_group)
+            bigshot = ShotRobo(big_projetil, spaw, self.rect.bottom, self.target, self.screen_width, 5,[20, 6, self.target.flip],  shot_group)
 
     
     def ult(self):

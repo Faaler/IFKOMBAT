@@ -3,6 +3,7 @@ from fighter import Fighter
 pygame.init()
 pygame.display.set_mode((2,1))
 ult_surf = pygame.image.load('./assets/images/ult_wizard/Nave.png').convert_alpha()
+ult_surf = pygame.transform.scale(ult_surf, (90, 90))
 projetil_group = pygame.sprite.Group()
 class Mago(Fighter):
     def __init__(self, player,flip,inicial_postion, data, sprite_sheet, animation_steps,sound, status, screen):
@@ -214,6 +215,7 @@ class Projetil_ULT(pygame.sprite.Sprite):
         if self.direction:
             self.rect.centerx += self.speed
         else:
+            self.image = pygame.transform.flip(self.image, self.direction, False)
             self.rect.centerx -= self.speed
         if self.rect.left > self.screen_width or self.rect.right < 0:
             self.kill()

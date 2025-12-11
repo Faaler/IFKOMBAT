@@ -1257,7 +1257,7 @@ class Bot_deusa(Deusa):
             self.vel_y = -self.jump_high
             self.jump = True
 
-        if dist_abs < max_dist and dist_abs >= min_dist:                    
+        if dist_abs < max_dist + 50 and dist_abs >= min_dist:                    
             if random.randint(0, 60) == 1 and self.jump == False and not self.repressed and not self.flying:
                 self.hab1()
 

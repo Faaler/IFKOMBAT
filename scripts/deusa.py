@@ -376,7 +376,7 @@ class Deusa(Fighter):
         if self.flying:
             if self.rect.y < 200:
                 self.vel_y = 0
-            if pygame.time.get_ticks() - self.last_flight > 1800:
+            if pygame.time.get_ticks() - self.last_flight > 1800 or not self.alive or not self.target.alive:
                 self.flying = False
                 self.animation_list = self.load_images(self.sprite_sheet, self.animation_steps)
                 self.speed = self.old_speed
@@ -388,7 +388,7 @@ class Deusa(Fighter):
             self.health = self.clone.health
             self.ult_points = self.clone.ult_points
             self.num_vitorias = self.clone.num_vitorias
-            if pygame.time.get_ticks() - self.ult_lastcall > self.ult_duration:
+            if pygame.time.get_ticks() - self.ult_lastcall > self.ult_duration or not self.target.alive or not self.alive:
                 utils.existis_goddess = 0
                 if self.player == 1:
                     utils.fighter_1 = self.me
@@ -579,14 +579,14 @@ class Deusa(Fighter):
                 attack_rect = pygame.Rect(
                             self.rect.right,
                             self.rect.y + 50,
-                            self.rect.width + 100,
+                            self.rect.width + 150,
                             self.rect.height/3 
                         )
             else:
                 attack_rect = pygame.Rect(
                             self.rect.left - (self.rect.width+60),
                             self.rect.y +50,
-                            self.rect.width + 100,
+                            self.rect.width + 150,
                             self.rect.height/3
                     )
             pygame.draw.rect(self.screen, 'lightblue', attack_rect)
@@ -636,6 +636,7 @@ class Deusa(Fighter):
         self.clone.health = self.health
         self.clone.num_vitorias = self.num_vitorias
         self.clone.ult_min = 30000
+        self.clone.health += 10
         self.clone.ult_points = self.ult_points
         if self.player == 1:
             utils.fighter_1 = self.clone

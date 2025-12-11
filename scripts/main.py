@@ -229,10 +229,11 @@ while run:
         utils.fighter_2.num_vitorias = 0
         utils.desafio_level = 0
         for inimigo in utils.inimigos:
-            inimigo.ult_points = 0
-            inimigo.health = 100
-            inimigo.alive = True
-            inimigo.num_vitorias = 0
+            if None not in utils.inimigos:
+                inimigo.ult_points = 0
+                inimigo.health = 100
+                inimigo.alive = True
+                inimigo.num_vitorias = 0
     if cenaAtual != cenaAnterior:
             
             # Ao SAIR da seleção e IR para o menu, você deve garantir que o estado interno

@@ -88,14 +88,14 @@ caracters_status = [
      },
     {
     'nome': 'Cavaleiro',
-    'dano1' : 6,
-    'dano2' : 9,
+    'dano1' : 7,
+    'dano2' : 10,
     'defesa': 2,
     'speed': 9,
     'jump_high': 35,
     'largura': 130,
     'altura': 220,
-    'attack_animation_cooldown_1' : 50,
+    'attack_animation_cooldown_1' : 40,
     'attack_animation_cooldown_2' : 55,
     'attack_box_size_1': [2.8, 2],
     'attack_box_size_2': [2.5, 0.9],
@@ -112,7 +112,7 @@ caracters_status = [
     'dano1' : 9,
     'dano2' : 18,
     'defesa': 4,
-    'speed': 6,
+    'speed': 5,
     'jump_high': 26,
     'largura': 130,
     'altura': 240,
@@ -148,28 +148,6 @@ caracters_status = [
      'knock_back': 2.5
      },
      {
-     'nome': 'Deusa',
-     'dano1' : 8,
-     'dano2' : 12,
-     'defesa': 2,
-     'speed': 6.5,
-     'jump_high': 30,
-     'largura': 100,
-     'altura': 230,
-     'attack_animation_cooldown_1' : 45,
-     'attack_animation_cooldown_2' : 35,
-     'attack_box_size_1': [1.3, 0.8],
-     'attack_box_size_2': [1.7, 1],
-     'frame_att1': 7,
-     'frame_att2': 10,
-     'ult_min': 10,
-     'attack_coldwon1': 8,
-     'attack_coldwon2': 35,
-     'knock_back': 1
-     },
-]
-
-goddess_boss =  {
      'nome' : 'Deusa',
      'dano1' : 10,
      'dano2' : 15,
@@ -184,9 +162,31 @@ goddess_boss =  {
      'attack_box_size_2': [1.7, 1],
      'frame_att1': 7,
      'frame_att2': 10,
-     'ult_min': 80,
+     'ult_min': 9,
      'attack_coldwon1': 8,
      'attack_coldwon2': 35,
+     'knock_back': 1
+     },
+]
+
+boss_deusa = {
+     'nome' : 'Deusa',
+     'dano1' : 10,
+     'dano2' : 15,
+     'defesa': 3.5,
+     'speed': 6.5,
+     'jump_high': 30,
+     'largura': 100,
+     'altura': 230,
+     'attack_animation_cooldown_1' : 45,
+     'attack_animation_cooldown_2' : 35,
+     'attack_box_size_1': [1.3, 0.8],
+     'attack_box_size_2': [1.7, 1],
+     'frame_att1': 7,
+     'frame_att2': 10,
+     'ult_min': 8,
+     'attack_coldwon1': 8,
+     'attack_coldwon2': 25,
      'knock_back': 1
      }
 
@@ -266,12 +266,20 @@ class Selecao:
         self.botao2_f5 = Botao(tela, "Paladino", 950,400,30,(200,0,0),(255,255,255))
         self.botao2_f6 = Botao(tela, "Deusa", 950,450,30,(200,0,0),(255,255,255))
         self.botao_menu = Botao(tela, 'Menu', 1200, 50, 50, (200,0,0), (0,255,0))
-        
+        self.texto_info_guerreiro = Texto(tela, "Guerreiro \n ATAQUES: C / V \n HABILIDADES: G - Poca de Acido / H - Atracao Magnetica / j - Piscina de Acido", 300, 650, 30, 'black', scorefonte)
+        self.texto_info_mago = Texto(tela, "Mago \n ATAQUES: C / V \n HABILIDADES: G - Avanco Magico / H - Lentidao / j - Alma do Corvo", 300, 650, 30, 'black', scorefonte)
+        self.texto_info_cavaleiro = Texto(tela, "Cavaleiro \n ATAQUES: C / V \n HABILIDADES: G - Dobra de espaco / H - Gelo Fino / j - Corpo Robusto", 300, 650, 30, 'black', scorefonte)
+        self.texto_info_robo = Texto(tela, "Robo \n ATAQUES: C / V \n HABILIDADES: G - Disparada / H - Bomba Movel / j - Missel Aerio", 300, 650, 30, 'black', scorefonte)
+        self.texto_info_paladino = Texto(tela, "Paladino \n ATAQUES: C / V \n HABILIDADES: G - Escuto Divino / H - Pacificacao / j - Na Proxima Vida", 300, 650, 30, 'black', scorefonte)
+        self.texto_info_deusa = Texto(tela, "Deusa \n ATAQUES: C / V \n HABILIDADES: G - Roubo de Alma / H - Levitacao / j - Tranfiguracao", 300, 650, 30, 'black', scorefonte)
     def atualizar(self):
         proximo_estado = self.nome_inicial
         screen = self.tela
         self.titulo.desenhar()
         self.botao_menu.desenhar()
+        posicaoMouse = pygame.mouse.get_pos()
+        
+
         if self.botao_menu.get_click():
             proximo_estado = 'menu'
 
@@ -303,6 +311,21 @@ class Selecao:
                 proximo_estado = 'selecaov2'
             if self.botao_menu.get_click():
                 proximo_estado = 'menu'
+
+            if self.botao_f1.rect.collidepoint(posicaoMouse):
+                self.texto_info_guerreiro.desenhar()
+            if self.botao_f2.rect.collidepoint(posicaoMouse):
+                self.texto_info_mago.desenhar()
+            if self.botao_f3.rect.collidepoint(posicaoMouse):
+                self.texto_info_cavaleiro.desenhar()
+            if self.botao_f4.rect.collidepoint(posicaoMouse):
+                self.texto_info_robo.desenhar()
+            if self.botao_f5.rect.collidepoint(posicaoMouse):
+                self.texto_info_paladino.desenhar()
+            if self.botao_f6.rect.collidepoint(posicaoMouse):
+                self.texto_info_deusa.desenhar()    
+
+            
             
         elif self.nome_inicial == 'selecaov2':
             utils.vs_background = random.randint(0,5)
@@ -331,6 +354,19 @@ class Selecao:
             if self.botao2_f6.get_click():
                 utils.fighter_2 = Deusa(2, True,PLAYER2_INICIAL_POSITION, PLAYER6_DATA, player6_sheet, GODDESS_ANIMATION_STEPS, staff_fx, caracters_status[5], screen)
                 proximo_estado = 'batalha'
+
+            if self.botao2_f1.rect.collidepoint(posicaoMouse):
+                self.texto_info_guerreiro.desenhar()
+            if self.botao2_f2.rect.collidepoint(posicaoMouse):
+                self.texto_info_mago.desenhar()
+            if self.botao2_f3.rect.collidepoint(posicaoMouse):
+                self.texto_info_cavaleiro.desenhar()
+            if self.botao2_f4.rect.collidepoint(posicaoMouse):
+                self.texto_info_robo.desenhar()
+            if self.botao2_f5.rect.collidepoint(posicaoMouse):
+                self.texto_info_paladino.desenhar()
+            if self.botao2_f6.rect.collidepoint(posicaoMouse):
+                self.texto_info_deusa.desenhar()    
         elif self.nome_inicial == 'selecaod':
             self.botao_f1.desenhar()
             self.botao_f2.desenhar()
@@ -356,6 +392,19 @@ class Selecao:
             if self.botao_f6.get_click():
                 utils.fighter_1 = Deusa(1, False,PLAYER1_INICIAL_POSITION, PLAYER6_DATA, player6_sheet, GODDESS_ANIMATION_STEPS, staff_fx, caracters_status[5], screen)
                 proximo_estado = 'batalha'
+
+            if self.botao_f1.rect.collidepoint(posicaoMouse):
+                self.texto_info_guerreiro.desenhar()
+            if self.botao_f2.rect.collidepoint(posicaoMouse):
+                self.texto_info_mago.desenhar()
+            if self.botao_f3.rect.collidepoint(posicaoMouse):
+                self.texto_info_cavaleiro.desenhar()
+            if self.botao_f4.rect.collidepoint(posicaoMouse):
+                self.texto_info_robo.desenhar()
+            if self.botao_f5.rect.collidepoint(posicaoMouse):
+                self.texto_info_paladino.desenhar()
+            if self.botao_f6.rect.collidepoint(posicaoMouse):
+                self.texto_info_deusa.desenhar()
             
             
             if utils.desafio_rota == 1:
@@ -364,7 +413,7 @@ class Selecao:
                 utils.inimigo3 = Bot_cavaleiro(2, True, PLAYER2_INICIAL_POSITION, PLAYER3_DATA, player3_sheet, KNIGHT_ANIMATION_STEPS, sword_fx, caracters_status[2], screen)
                 utils.inimigo4 = Bot_robo(2, True, PLAYER2_INICIAL_POSITION, PLAYER4_DATA, player4_sheet, ROBOT_ANIMATION_STEPS, staff_fx, caracters_status[3], screen)
                 utils.inimigo5 = Bot_paladino(2, True, PLAYER2_INICIAL_POSITION, PLAYER5_DATA, player5_sheet, PALADINE_ANIMATION_STEPS, staff_fx, caracters_status[4], screen)
-                utils.inimigo6 = Bot_deusa(2, True,PLAYER2_INICIAL_POSITION, PLAYER6_DATA, player6_sheet, GODDESS_ANIMATION_STEPS, staff_fx, goddess_boss, screen)
+                utils.inimigo6 = Bot_deusa(2, True,PLAYER2_INICIAL_POSITION, PLAYER6_DATA, player6_sheet, GODDESS_ANIMATION_STEPS, staff_fx, boss_deusa, screen)
        
 
             utils.inimigos = [

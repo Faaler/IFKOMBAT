@@ -25,9 +25,10 @@ class Botao:
         self.posicao = (x, y)
         self.corFundo = corFundo
         self.tamanho = tamanho
+        self.rect = 0
     def desenhar(self):
-        rect = pygame.Rect(self.posicao, self.texto.imagemTexto.get_size())
-        pygame.draw.rect(self.tela, self.corFundo, rect)
+        self.rect = pygame.Rect(self.posicao, self.texto.imagemTexto.get_size())
+        pygame.draw.rect(self.tela, self.corFundo, self.rect)
         self.texto.desenhar()
     def get_click(self):
         posicaoMouse = pygame.mouse.get_pos()

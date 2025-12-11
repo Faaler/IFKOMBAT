@@ -107,7 +107,10 @@ class Cavaleiro(Fighter):
                 self.animation_list = self.load_images(self.old_sprite, self.animation_steps)
 
         if self.count_yknock_back > 0:
-            self.target.rect.y -= 50 - self.target.knock_resistence / 2
+            if not self.ulted:
+                self.target.rect.y -= 50 - self.target.knock_resistence / 2
+            else:
+                self.target.rect.y -= 50
             self.count_yknock_back -= 1
 
         if self.ulted:
@@ -184,8 +187,8 @@ class Cavaleiro(Fighter):
             self.speed = 7
             self.defesa = 3
             self.jump_high = 25
-            self.dano1 = 8
-            self.dano2 = 13
+            self.dano1 = 10
+            self.dano2 = 14
             self.attack_animation_cooldown_1 = 65
             self.attack_animation_cooldown_2 = 70
             self.ulted = True
