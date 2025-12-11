@@ -338,8 +338,7 @@ class Fighter():
                     self.rect.width * self.attack_hitbox_modificator_1[0],
                     self.rect.height * self.attack_hitbox_modificator_1[1]
                 )
-                print("MOD 1:", self.attack_hitbox_modificator_1[1])
-                print("OFFSET:", (self.attack_hitbox_modificator_1[1] * self.rect.height) - self.rect.height)
+              
                 #pygame.draw.rect(self.screen, 'green', attack_rect)
             else:
                 attack_rect = pygame.Rect(

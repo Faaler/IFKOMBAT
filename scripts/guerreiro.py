@@ -64,7 +64,7 @@ class Guerreiro(Fighter):
                 self.count_knock_back = self.knock_back * 3
                 target.jump = True
                 target.hit = True
-                print(self.rect.y)
+                
 
     def update(self):
         if self.hit:

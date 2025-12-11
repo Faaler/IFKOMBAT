@@ -471,7 +471,7 @@ class Deusa(Fighter):
                 # attacks
                 if key[pygame.K_c] and not self.flying:
                     self.attack1()
-                    print(self.defesa)
+                    
                     
                 
                 if key[pygame.K_v] and not self.flying:

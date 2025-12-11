@@ -152,7 +152,7 @@ caracters_status = [
      'dano1' : 10,
      'dano2' : 15,
      'defesa': 2.5,
-     'speed': 6.5,
+     'speed': 6,
      'jump_high': 30,
      'largura': 100,
      'altura': 230,
@@ -587,7 +587,7 @@ class Batalha:
                 utils.fighter_2.num_vitorias = 0
                 self.batalha_done = True
                 self.estado = 'menu'
-            print(utils.desafio_level)
+            
             utils.fighter_2 = utils.inimigos[utils.desafio_level - 1]
 
         self.over = False
